@@ -1,4 +1,7 @@
-let domain = "http://localhost";
+// let host = "api.landlord.pushy.site";
+let host = "192.168.0.111";
+
+let domain = 'http://' + host;
 
 export default {
   auth: {
@@ -6,7 +9,13 @@ export default {
     qqLogin: domain + '/qqLogin'
   },
   users: {
-    me: domain + '/users/me'
+    myself: domain + '/users/myself'
+  },
+  player: {
+    myCards: domain + '/player/cards',
+    isPlayerRound: domain + '/player/round',
+    isReady: domain + '/player/ready',
+    canPass: domain + '/player/pass'
   },
   rooms: {
     listRoom: domain + '/rooms',
@@ -19,6 +28,7 @@ export default {
   },
   game: {
     ready: domain + '/games/ready',
+    unReady: domain + '/games/unReady',
     myCards: domain + '/games/cards',
     bid: domain + '/games/bid',
     play: domain + '/games/play',
@@ -26,7 +36,7 @@ export default {
   },
   ws: {
     connect(token) {
-      return `ws://localhost/ws?token=${token}`
+      return `ws://${host}/ws?token=${token}`
     }
   }
 

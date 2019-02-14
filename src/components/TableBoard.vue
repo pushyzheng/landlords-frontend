@@ -26,10 +26,9 @@
       <button @clikc="bid(3)">3分</button>
     </div>
 
-    <div style="margin-top: 20px;">
-      <!--<button @click="playCard" v-show="showPlayBtn">出牌</button>-->
-      <button @click="playCard">出牌</button>
-      <button @click="pass">要不起</button>
+    <div style="margin-top: 20px;display: flex;justify-content: center;" v-show="showPlayBtn">
+      <button @click="playCard" class="operation-button">出牌</button>
+      <button @click="pass" v-show="showPassbtn" class="operation-button">不出</button>
     </div>
 
     <div class="hand">
@@ -57,8 +56,10 @@
 
         showPlayBtn: false,
         showBidBtn: false,
+        showPassbtn: false
       }
     },
+    props: ['room'],
     methods: {
       isOverlapping(index) {
         return index != 0;
@@ -76,8 +77,9 @@
       },
       showBid() { this.showBidBtn = true },
       showPlay() { this.showPlayBtn = true },
+
       getMyCards() {
-        this.$http.get(this.$urls.game.myCards).then(
+        this.$http.get(this.$urls.player.myCards).then(
           response => {
             this.myCardList = response.data.data;
         }).catch(
@@ -116,8 +118,9 @@
       playCard() {
         let index = 0;
         let body = [];
-        for (let i = 0; i <this.myCardList.length; i++) {
-          if (this.selectCardList[index] === i) {
+        this.selectCardList.sort(this.sortNumber);  // 对选择列表先进行排序
+        for (let i = 0; i < this.myCardList.length; i++) {
+          if (this.selectCardList[index] == i) {
             body.push(this.myCardList[i]);
             index++;
           }
@@ -125,7 +128,7 @@
         this.$http.post(this.$urls.game.play, body).then(
           response => {
             this.showPlayBtn = false;
-            this.selectCardList.clear();
+            this.selectCardList = [];
             this.getMyCards();
           }
         ).catch(
@@ -137,11 +140,35 @@
           response => {
             console.log(response.data.data);
             this.showPlayBtn = false;
-            this.selectCardList.clear();
+            this.selectCardList = [];
           }
         ).catch(
           error => alert(error.response.data.message)
         )
+      },
+      /**
+       * 查询是否为当前玩家出牌回合
+       */
+      getPlayerRound() {
+        this.$http.get(this.$urls.player.isPlayerRound).then(
+          response => {
+            this.showPlayBtn = response.data.data;
+          }
+        ).catch(
+          error => alert(error.response.data.message)
+        )
+      },
+      getCanPass() {
+        this.$http.get(this.$urls.player.canPass).then(
+          response => {
+            this.showPassbtn = response.data.data;
+          }
+        ).catch(
+          error => alert(error.response.data.message)
+        )
+      },
+      sortNumber(a, b) {
+        return a - b;
       }
     },
     filters: {
@@ -154,8 +181,17 @@
         else return value;
       }
     },
+    watch: {
+      room(roomObj) {
+        if (this.room.status === this.$enums.roomStatus.playing) {
+          // 如果当前游戏的状态为游戏中，则调用TableBoard组件的方法，获取卡牌
+          this.getMyCards();
+          this.getPlayerRound();
+          this.getCanPass();
+        }
+      }
+    },
     created() {
-
     }
   }
 </script>

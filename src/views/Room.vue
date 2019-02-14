@@ -1,20 +1,27 @@
 <template>
   <div>
-    <div style="text-align: center"><h1>{{ roomId }}</h1></div>
-    <!--玩家列表-->
-    <div v-for="player in playerList">
-      <img :src="player.user.avatar" style="float: left;margin-right: 20px;width: 60px;">
-      <h3>{{ player.user.username }}（{{ player.identityName }}）</h3>
-      <span v-show="gamePreparing" style="color: red">{{ player.ready == true ? '已准备' : '未准备' }}</span>
+    <div style="display: flex;">
+      <!--玩家列表-->
+      <div v-for="player in playerList" style="margin-left: 20px;">
+        <img :src="player.user.avatar" style="width: 50px;">
+        <h3>{{ player.user.username }}（{{ player.identityName }}）</h3>
+        <span v-show="gamePreparing" style="color: red">{{ player.ready == true ? '已准备' : '未准备' }}</span>
+      </div>
     </div>
 
-    <div v-show="userPreparing">
-      <br><br><br>
-      <button @click="ready" v-show="gamePreparing">准备</button>
-      <button @click="exitRoom" v-show="gamePreparing">退出房间</button>
+    <br><br><br>
+    <div style="display: flex;justify-content: center;">
+      <div v-if="userPreparing">
+        <button @click="ready" v-show="gamePreparing" class="operation-button">准备</button>
+        <button @click="exitRoom" v-show="gamePreparing" class="operation-button">退出房间</button>
+      </div>
+      <div v-else>
+        <button @click="unReady" v-show="gamePreparing" class="operation-button">取消准备</button>
+      </div>
     </div>
 
-    <TableBoard ref="tableBoard" />
+    <TableBoard ref="tableBoard" :room="room" />
+
   </div>
 </template>
 
@@ -26,7 +33,7 @@
     components: {TableBoard},
     data() {
       return {
-        userPreparing: true,
+        userPreparing: false,
 
         roomId: this.$route.params.id,
         playerList: null,
@@ -46,9 +53,8 @@
           response => {
             this.room = response.data.data;
             this.playerList = this.room.playerList;
-            // 如果当前游戏的状态为游戏中，则调用TableBoard组件的方法，获取卡牌
-            if (this.room.status === this.$enums.roomStatus.playing) {
-              this.$refs.tableBoard.getMyCards();
+            if (this.room.status === this.$enums.roomStatus.preparing) {
+              this.getPlayerReady();
             }
           }
         ).catch(
@@ -80,6 +86,24 @@
           error => alert(error.response.data.message)
         )
       },
+      unReady() {
+        this.$http.post(this.$urls.game.unReady).then(
+          response => {
+            this.userPreparing = true;
+          }
+        ).catch(
+          error => alert(error.response.data.message)
+        )
+      },
+      getPlayerReady() {
+        this.$http.get(this.$urls.player.isReady).then(
+          response => {
+            this.userPreparing = !response.data.data;
+          }
+        ).catch(
+          error => alert(error)
+        )
+      },
       /**
        * 接收webSocket回调消息的函数
        */
@@ -87,11 +111,12 @@
         console.log(event.data);
         let data = JSON.parse(event.data);
         // 准备游戏消息处理
-        if (data.type === enums.wsType.readyGame) {
+        if (data.type === enums.wsType.readyGame || data.type === enums.wsType.unReadyGame) {
           for (let i = 0; i < this.playerList.length; i++) {
             if (this.playerList[i].user.id == data.userId) {
               let player = this.playerList[i];
-              player.ready = true;
+              if (data.type === enums.wsType.readyGame) player.ready = true;
+              else player.ready = false;
               this.playerList.splice(i, 1, player);
             }
           }
@@ -113,8 +138,18 @@
         else if (data.type === enums.wsType.bidEnd) {
           this.getRoom();
         }
+        // 通知玩家出牌
         else if (data.type === enums.wsType.pleasePlayCard) {
+          alert('请出牌!!!')
           this.$refs.tableBoard.showPlay();
+          this.$refs.tableBoard.getCanPass();
+        }
+        else if (data.type === enums.wsType.playCard) {
+          alert('有人出牌！！！' + data.userId)
+        }
+        // 游戏结束
+        else if (data.type === enums.wsType.gameEnd) {
+          alert('游戏结束：\n' + "获胜方：" + data.winingIdentityName + "\n");
         }
       }
     },
@@ -128,7 +163,7 @@
           console.log('WebSocket连接成功');
         }
         this.websocket.onerror = function () {
-          console.error('WebSocket连接发生错误');
+          alert('WebSocket连接发生错误')
         };
         this.websocket.onmessage = this.onWsMessage;
       }
@@ -137,5 +172,4 @@
 </script>
 
 <style scoped>
-
 </style>

@@ -6,7 +6,7 @@ let cards = [
   {num: 5}
 ]
 
-let selectList = [1, 3];
+let selectList = [3,1,4];
 let index = 0;
 
 let result = [];

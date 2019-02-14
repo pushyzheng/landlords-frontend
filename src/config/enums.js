@@ -19,7 +19,11 @@ export default {
 
   wsType: {
     readyGame: "READY_GAME",
+    unReadyGame: 'UNREADY_GAME',
     startGame: "START_GAME",
+    gameEnd: 'GAME_END',
+    playCard: 'PLAY_CARD',
+
     playerJoin: "PLAYER_JOIN",
     playerExit: "PLAYER_EXIT",
     bid: 'BID',
