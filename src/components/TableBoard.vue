@@ -18,28 +18,34 @@
       <!--</div>-->
     <!--</div>-->
 
+    <PlayerCardList :cards="otherPlayCardList" />
+
     <!--叫分按钮-->
     <div style="margin-top: 100px;display: flex;justify-content: center" v-show="showBidBtn">
       <button @click="bid(0)">不叫</button>
       <button @click="bid(1)">1分</button>
       <button @click="bid(2)">2分</button>
-      <button @clikc="bid(3)">3分</button>
+      <button @click="bid(3)">3分</button>
     </div>
 
+    <!--出牌和不出按钮-->
     <div style="margin-top: 20px;display: flex;justify-content: center;" v-show="showPlayBtn">
       <button @click="playCard" class="operation-button">出牌</button>
       <button @click="pass" v-show="showPassbtn" class="operation-button">不出</button>
     </div>
 
-    <div class="hand">
-      <div class="card"
-           v-for="(card, index) in myCardList"
-           v-bind:style="{backgroundColor: cardBackground(index) }"
-           v-bind:class="{overlapping: isOverlapping(index),
+    <!--当前玩家的牌-->
+    <div id="my-card">
+      <div class="hand">
+        <div class="card"
+             v-for="(card, index) in myCardList"
+             v-bind:style="{backgroundColor: cardBackground(index) }"
+             v-bind:class="{overlapping: isOverlapping(index),
            suitspades: typeClass(card, 'SPADE'), suitclubs: typeClass(card, 'CLUB'),
            suithearts: typeClass(card, 'HEART'), suitdiamonds: typeClass(card, 'DIAMOND')}"
-           @click="selectCard(index)">
-        <p>{{ card.numberValue | cardNumberFilter }}</p>
+             @click="selectCard(index)">
+          <p>{{ card.numberValue | cardNumberFilter }}</p>
+        </div>
       </div>
     </div>
 
@@ -47,11 +53,14 @@
 </template>
 
 <script>
+  import PlayerCardList from "./PlayerCardList";
   export default {
     name: "TableBoard",
+    components: {PlayerCardList},
     data() {
       return {
         myCardList: [],
+        otherPlayCardList: [],
         selectCardList: [],
 
         showPlayBtn: false,
@@ -77,6 +86,9 @@
       },
       showBid() { this.showBidBtn = true },
       showPlay() { this.showPlayBtn = true },
+      showOtherPlayerCards(data) {
+        this.otherPlayCardList = data.cardList;
+      },
 
       getMyCards() {
         this.$http.get(this.$urls.player.myCards).then(
@@ -169,6 +181,17 @@
       },
       sortNumber(a, b) {
         return a - b;
+      },
+      /**
+       * 一局游戏结束之后显示的
+       */
+      gameEndListener() {
+        this.myCardList = [];
+        this.otherPlayCardList = [];
+        this.selectCardList = [];
+        this.showPlayBtn = false,
+        this.showBidBtn = false,
+        this.showPassbtn = false
       }
     },
     filters: {
@@ -198,4 +221,13 @@
 
 <style scoped>
   @import "../../static/css/card.css";
+
+  #my-card {
+    display: flex;
+    justify-content: center;
+  }
+
+  .operation-button {
+    padding: 10px 20px;
+  }
 </style>

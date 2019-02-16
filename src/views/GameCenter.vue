@@ -2,7 +2,7 @@
   <div id="game-center">
     <h1 v-if="roomList.length == 0">当前没有房间</h1>
 
-    <div v-for="room in roomList">
+    <div v-for="room in roomList" style="font-size: 20px;">
       <a href="javascript:void(0)" @click="enterRoom(room)">{{ room.id }}</a>
       <span v-if="room.status == 'PREPARING'">准备中</span>
       <span v-else>游戏中</span>
@@ -10,9 +10,9 @@
     </div>
 
     <div style="margin-top: 20px;">
-      <button @click="createRoom">创建房间</button>
-      <button @click="getRoomList">刷新</button>
-      <button @click="backToRoom" v-show="showBackToRoom">返回房间</button>
+      <button @click="createRoom" class="operation-button">创建房间</button>
+      <button @click="getRoomList" class="operation-button">刷新</button>
+      <button @click="backToRoom" v-show="showBackToRoom" class="operation-button">返回房间</button>
     </div>
 
   </div>

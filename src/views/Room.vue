@@ -104,6 +104,17 @@
           error => alert(error)
         )
       },
+      gameEnd(data) {
+        this.getRoom();
+        this.userPreparing = false;
+        this.$refs.tableBoard.gameEndListener();
+
+        let str = "";
+        for (let i = 0; i < data.resList.length; i++) {
+          str += JSON.stringify(data.resList[i]) + "\n";
+        }
+        alert('游戏结束：\n' + "获胜方：" + data.winingIdentityName + "\n" + "比分情况：\n" + str);
+      },
       /**
        * 接收webSocket回调消息的函数
        */
@@ -140,33 +151,37 @@
         }
         // 通知玩家出牌
         else if (data.type === enums.wsType.pleasePlayCard) {
-          alert('请出牌!!!')
+          // alert('请出牌!!!')
           this.$refs.tableBoard.showPlay();
           this.$refs.tableBoard.getCanPass();
         }
         else if (data.type === enums.wsType.playCard) {
-          alert('有人出牌！！！' + data.userId)
+          this.$refs.tableBoard.showOtherPlayerCards(data);
         }
         // 游戏结束
         else if (data.type === enums.wsType.gameEnd) {
-          alert('游戏结束：\n' + "获胜方：" + data.winingIdentityName + "\n");
+          this.gameEnd(data);
         }
       }
     },
     created() {
-      this.getRoom();
-      if (localStorage.getItem('token') != null) {
+      this.getRoom();if (localStorage.getItem('token') != null) {
         if ('WebSocket' in window) {
           this.websocket = new WebSocket(this.$urls.ws.connect(localStorage.getItem('token')));
         }
+        this.websocket.onmessage = this.onWsMessage;
         this.websocket.onopen = function () {
           console.log('WebSocket连接成功');
         }
         this.websocket.onerror = function () {
           alert('WebSocket连接发生错误')
-        };
-        this.websocket.onmessage = this.onWsMessage;
+        }
+        this.websocket.onclose = function () {
+          console.log('websocket断开连接了，尝试重连。。。');
+          this.websocket.init("")
+        }
       }
+
     }
   }
 </script>
