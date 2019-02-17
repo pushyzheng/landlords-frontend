@@ -29,7 +29,9 @@ export default {
     bid: 'BID',
     bidEnd: 'BID_END',
 
-    pleasePlayCard: 'PLEASE_PLAY_CARD'
+    pleasePlayCard: 'PLEASE_PLAY_CARD',
+
+    pong: 'PONG'
   }
 
 }

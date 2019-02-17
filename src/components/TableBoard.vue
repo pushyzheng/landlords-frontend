@@ -1,36 +1,17 @@
 <template>
   <div>
-    <!--<div class="hand">-->
-      <!--<div class="card suitdiamonds">-->
-        <!--<p>3</p>-->
-      <!--</div>-->
-
-      <!--<div class="card suithearts" style="margin-left: -110px">-->
-        <!--<p>A</p>-->
-      <!--</div>-->
-
-      <!--<div class="card suitclubs" style="margin-left: -110px;">-->
-        <!--<p>2</p>-->
-      <!--</div>-->
-
-      <!--<div class="card suitspades" style="margin-left: -110px;">-->
-        <!--<p>5</p>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <PlayerCardList :cards="otherPlayCardList" />
 
     <!--叫分按钮-->
-    <div style="margin-top: 100px;display: flex;justify-content: center" v-show="showBidBtn">
-      <button @click="bid(0)">不叫</button>
-      <button @click="bid(1)">1分</button>
-      <button @click="bid(2)">2分</button>
-      <button @click="bid(3)">3分</button>
+    <div id="bid-operation" v-show="showBidBtn">
+      <button @click="bid(0)" class="bid-button">不叫</button>
+      <button @click="bid(1)" class="bid-button">1分</button>
+      <button @click="bid(2)" class="bid-button">2分</button>
+      <button @click="bid(3)" class="bid-button">3分</button>
     </div>
 
     <!--出牌和不出按钮-->
-    <div style="margin-top: 20px;display: flex;justify-content: center;" v-show="showPlayBtn">
-      <button @click="playCard" class="operation-button">出牌</button>
+    <div id="play-operation" v-show="showPlayBtn">
+      <button @click="playCard" class="operation-button" style="margin-right: 20px;">出牌</button>
       <button @click="pass" v-show="showPassbtn" class="operation-button">不出</button>
     </div>
 
@@ -60,7 +41,6 @@
     data() {
       return {
         myCardList: [],
-        otherPlayCardList: [],
         selectCardList: [],
 
         showPlayBtn: false,
@@ -86,9 +66,6 @@
       },
       showBid() { this.showBidBtn = true },
       showPlay() { this.showPlayBtn = true },
-      showOtherPlayerCards(data) {
-        this.otherPlayCardList = data.cardList;
-      },
 
       getMyCards() {
         this.$http.get(this.$urls.player.myCards).then(
@@ -230,4 +207,26 @@
   .operation-button {
     padding: 10px 20px;
   }
+
+  .bid-button {
+    width: 50px;
+    height: 25px;
+    margin-right: 5px;
+  }
+
+  #bid-operation {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+  }
+
+  #play-operation {
+    display: flex;
+    justify-content: center;
+  }
+
+  #my-card {
+    margin-top: 20px;
+  }
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div id="login">
+  <div id="login-view">
     <input type="text" v-model="username"> <br><br>
     <input type="text" v-model="password"> <br><br>
     <button @click="submit">登录</button>

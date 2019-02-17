@@ -1,5 +1,5 @@
 <template>
-  <div style="text-align: center">
+  <div style="text-align: center" id="oauth-callback-view">
     <h3>认证跳转中 ...</h3>
   </div>
 </template>

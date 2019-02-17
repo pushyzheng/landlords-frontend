@@ -1,5 +1,5 @@
 <template>
-  <div id="game-center">
+  <div id="game-center-view">
     <h1 v-if="roomList.length == 0">当前没有房间</h1>
 
     <div v-for="room in roomList" style="font-size: 20px;">
@@ -49,6 +49,11 @@
         )
       },
       enterRoom(room) {
+        let curRoomId = localStorage.getItem('CURRENT_ROOM_ID');
+        if (curRoomId === room.id) {
+          this.$router.push({name: 'Room', params: {id: room.id}})
+          return;
+        }
         if (room.userList.length >= 3) alert("人数已满，无法加入");
         else if (room.status == enums.roomStatus.playing) alert('游戏已开始，无法加入');
         else {
