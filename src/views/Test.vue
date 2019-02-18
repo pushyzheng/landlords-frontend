@@ -1,12 +1,14 @@
 <template>
   <div id="test-view">
-    Test
+    <GameAudio/>
   </div>
 </template>
 
 <script>
+  import GameAudio from "../components/GameAudio";
   export default {
-    name: "Test"
+    name: "Test",
+    components: {GameAudio}
   }
 </script>
 

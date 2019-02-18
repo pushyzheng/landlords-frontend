@@ -20,11 +20,19 @@
 // console.log(result);
 
 
-let resList = [{"Oauth":2},{"pushyzheng":-4},{"Pushy":2}];
+// let resList = [{"Oauth":2},{"pushyzheng":-4},{"Pushy":2}];
+//
+// let str = "";
+// for (let i = 0; i < resList.length; i++) {
+//   str += JSON.stringify(resList[i]) + "\n";
+// }
+//
+// console.log(str);
 
-let str = "";
-for (let i = 0; i < resList.length; i++) {
-  str += JSON.stringify(resList[i]) + "\n";
+
+let urls = {
+  'a': 'aurl',
+  'b': 'burl'
 }
 
-console.log(str);
+console.log(urls['c']);

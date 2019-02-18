@@ -1,7 +1,9 @@
 <template>
   <div id="game-center-view">
-    <h1 v-if="roomList.length == 0">当前没有房间</h1>
+    <!--欢迎音乐-->
+    <!--<audio loop="loop" :src="welcomeMusicUrl" autoplay="autoplay" />-->
 
+    <h1 v-if="roomList.length == 0">当前没有房间</h1>
     <div v-for="room in roomList" style="font-size: 20px;">
       <a href="javascript:void(0)" @click="enterRoom(room)">{{ room.id }}</a>
       <span v-if="room.status == 'PREPARING'">准备中</span>
@@ -20,10 +22,12 @@
 
 <script>
   import enums from '../config/enums'
+  import musicUrls from '../config/music'
 
   export default {
     data() {
       return {
+        welcomeMusicUrl: musicUrls.welcome,
         roomList: []
       }
     },
@@ -94,23 +98,18 @@
   }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   h1, h2 {
     font-weight: normal;
   }
 
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
-
   a {
     color: #42b983;
   }
+
+  #game-center-view {
+    padding: 10px;
+  }
+
+
 </style>

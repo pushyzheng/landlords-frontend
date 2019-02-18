@@ -94,6 +94,7 @@
        * 玩家点击牌处理逻辑
        */
       selectCard(index) {
+        this.$emit('selectCard');  // 发射selectCard信号让父组件接收
         let i = this.selectCardList.indexOf(index);
         if (i != -1) { // 该牌已选中
           this.selectCardList.splice(i, 1);

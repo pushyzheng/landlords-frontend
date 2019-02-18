@@ -1,9 +1,6 @@
 <template>
   <div id="room-view">
-    <audio id="game-bgm">
-      <source src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/MusicEx/MusicEx_Welcome.mp3" type="audio/mp3" />
-      <embed height="100" width="100" src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/MusicEx/MusicEx_Welcome.mp3" />
-    </audio>
+    <GameAudio ref="gameAudio" />
 
     <!--其他玩家用户信息-->
     <div id="other-player-user">
@@ -57,7 +54,7 @@
       <CardList :cards="curPlayer.recentCards" v-if="curPlayer != null"/>
     </div>
 
-    <TableBoard ref="tableBoard" :room="room"/>
+    <TableBoard ref="tableBoard" :room="room" @selectCard="selectCardListener"/>
 
     <!--当前玩家的信息和状态栏-->
     <div id="my-info">
@@ -80,9 +77,10 @@
   import TableBoard from "../components/TableBoard";
   import Avatar from "../components/Avatar";
   import CardList from "../components/PlayerCardList";
+  import GameAudio from "../components/GameAudio";
 
   export default {
-    components: {CardList, Avatar, TableBoard},
+    components: { GameAudio, CardList, Avatar, TableBoard },
     data() {
       return {
         userPreparing: false,
@@ -121,10 +119,10 @@
           error => {
             if (error.response.status == 404) {
               alert('该房间不存在，将返回大厅');
-              this.$router.push({name: 'GameCenter'});
             } else {
               alert('发生未知错误，返回大厅： \n' + error);
             }
+            this.$router.push({name: 'GameCenter'});
           }
         );
       },
@@ -169,6 +167,8 @@
         )
       },
       gameEnd(data) {
+        this.$refs.gameAudio.pauseNormalMusic();
+        this.$refs.gameAudio.playEndMusic(data.winning);
         this.getRoom();
         this.userPreparing = false;
         this.$refs.tableBoard.gameEndListener();
@@ -230,8 +230,10 @@
           this.$refs.tableBoard.showPlay();
           this.$refs.tableBoard.getCanPass();
         }
+        // 有玩家出牌
         else if (data.type === enums.wsType.playCard) {
           this.getRoom();
+          this.$refs.gameAudio.playOutMusic(data.cardType, data.number);
         }
         // 游戏结束
         else if (data.type === enums.wsType.gameEnd) {
@@ -264,6 +266,9 @@
       resetWsTimeOut() {
         clearTimeout(this.wsTimeoutObj);
         this.startWsTimeOut();
+      },
+      selectCardListener() {
+        this.$refs.gameAudio.playSelectMusic();  // 播放选择牌音效
       }
     },
     created() {
@@ -273,8 +278,7 @@
       }
     },
     mounted() {
-      let audio = document.getElementById("game-bgm");
-      // audio.play();
+      // this.$refs.gameAudio.playNormalMusic();
     }
   }
 </script>
