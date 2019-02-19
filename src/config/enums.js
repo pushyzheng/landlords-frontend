@@ -23,6 +23,7 @@ export default {
     startGame: "START_GAME",
     gameEnd: 'GAME_END',
     playCard: 'PLAY_CARD',
+    pass: 'PASS',
 
     playerJoin: "PLAYER_JOIN",
     playerExit: "PLAYER_EXIT",

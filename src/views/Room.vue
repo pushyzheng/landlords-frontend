@@ -1,5 +1,5 @@
 <template>
-  <div id="room-view">
+  <div id="room-view" v-bind:style="roomViewStyleObj">
     <GameAudio ref="gameAudio" />
 
     <!--其他玩家用户信息-->
@@ -11,10 +11,14 @@
             <Avatar :url="prevPlayer.user.avatar"/>
           </div>
           <span class="others-username">{{ prevPlayer.user.username }}</span><br>
-          <span class="others-money">剩余金额：{{ prevPlayer.user.money }}</span><br>
+          <span class="others-money">
+            <img src="../assets/money-bag.png" class="money-icon">{{ prevPlayer.user.money }}
+          </span><br>
           <span class="others-identity" v-show="prevPlayer.identityName != ' '">{{ prevPlayer.identityName }}</span>
         </div>
-        <div style="color: red" v-if="gamePreparing">{{ prevPlayer.ready == true ? '已准备' : '未准备' }}</div>
+        <div v-if="gamePreparing">
+          <img src="../assets/ok-left.png" style="width: 70px;" v-if="prevPlayer.ready">
+        </div>
         <div class="remaining-cards" v-else>{{ prevPlayer.cardSize }}</div>
         <CardList :cards="prevPlayer.recentCards" id="prev-player-recentcards" />
       </div>
@@ -23,7 +27,9 @@
       <!--下家（右边玩家）-->
       <div id="next-player" v-if="nextPlayer != null">
         <CardList :cards="nextPlayer.recentCards" id="next-player-recentcards" />
-        <div style="color: red" v-if="gamePreparing">{{ nextPlayer.ready == true ? '已准备' : '未准备' }}</div>
+        <div v-if="gamePreparing">
+          <img src="../assets/ok-right.png" style="width: 70px;" v-if="nextPlayer.ready">
+        </div>
         <div class="remaining-cards" v-else>{{ nextPlayer.cardSize }}</div>
 
         <div style="margin-left: 20px;">
@@ -31,23 +37,25 @@
             <Avatar :url="nextPlayer.user.avatar"/>
           </div>
           <span class="others-username">{{ nextPlayer.user.username }}</span><br>
-          <span class="others-money">剩余金额：{{ nextPlayer.user.money }}</span><br>
-          <span class="others-identity" v-show="nextPlayer.identityName != ' '">【{{ nextPlayer.identityName }}】</span>
+          <span class="others-money">
+            <img src="../assets/money-bag.png" class="money-icon"> {{ nextPlayer.user.money }}
+          </span><br>
+          <span class="others-identity" v-show="nextPlayer.identityName != ' '">{{ nextPlayer.identityName }}</span>
         </div>
       </div>
       <div v-else></div>
     </div>
 
     <!--准备和退出房间操作按钮-->
-    <div style="display: flex;justify-content: center;">
+    <mu-flex justify-content="center" align-items="center">
       <div v-if="userPreparing">
-        <button @click="ready" v-show="gamePreparing" class="operation-button">准备</button>
-        <button @click="exitRoom" v-show="gamePreparing" class="operation-button">退出房间</button>
+        <mu-button @click="ready" v-show="gamePreparing" color="primary" large round>准备</mu-button>
+        <mu-button @click="exitRoom" v-show="gamePreparing" color="error" large round>退出房间</mu-button>
       </div>
       <div v-else>
-        <button @click="unReady" v-show="gamePreparing" class="operation-button">取消准备</button>
+        <mu-button @click="unReady" v-show="gamePreparing" color="success" large round>取消准备</mu-button>
       </div>
-    </div>
+    </mu-flex>
 
     <!--当前玩家最近出的牌-->
     <div style="display: flex;justify-content: center;">
@@ -61,13 +69,25 @@
       <div>
         <Avatar :url="curUser.avatar"/>
         <span id="curuser-username">{{ curUser.username }}</span>
-        <span id="curuser-money">剩余金额：{{ curUser.money }}</span>
+        <span id="curuser-money">
+          <img src="../assets/money-bag.png" class="money-icon">
+          {{ curUser.money }}
+        </span>
       </div>
       <div>
         <!--房间当前的倍数-->
         <span id="room-multiple">当前倍数：{{ room == null ? 0 : room.multiple }}</span>
       </div>
     </div>
+
+    <!--结束时显示信息的Dialog-->
+    <mu-dialog title="Dialog" width="500" :open.sync="gameEndDialog">
+
+      <div style="display: flex;justify-content: space-between">
+        <mu-button color="error" round large @click="gameEndDialog=false">确定</mu-button>
+        <mu-button color="primary" round large @click="continueGame">继续游戏</mu-button>
+      </div>
+    </mu-dialog>
 
   </div>
 </template>
@@ -83,7 +103,11 @@
     components: { GameAudio, CardList, Avatar, TableBoard },
     data() {
       return {
+        roomViewStyleObj: {
+          height: document.documentElement.clientHeight + 'px'
+        },
         userPreparing: false,
+        gameEndDialog: false,
         prevPlayer: null,
         curPlayer: null,
         nextPlayer: null,
@@ -235,6 +259,10 @@
           this.getRoom();
           this.$refs.gameAudio.playOutMusic(data.cardType, data.number);
         }
+        // 有玩家不出
+        else if (data.type === enums.wsType.pass) {
+          this.$refs.gameAudio.playPassMusic(data.user);
+        }
         // 游戏结束
         else if (data.type === enums.wsType.gameEnd) {
           this.gameEnd(data);
@@ -269,6 +297,10 @@
       },
       selectCardListener() {
         this.$refs.gameAudio.playSelectMusic();  // 播放选择牌音效
+      },
+      continueGame() {
+        this.gameEndDialog = false;
+        this.ready();
       }
     },
     created() {
@@ -289,7 +321,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 722px;
     background-image: url("../assets/table-background.jpg");
     background-size: cover;
   }
@@ -304,37 +335,47 @@
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    /*margin-top: 50px;*/
-    margin-bottom: 10px;
-    margin-left: 10px;
+    padding: 5px;
+    background-color: rgba(0,0,0,.54);
   }
 
   #curuser-username {
     font-size: 20px;
-    background: #D3D3D3;
     margin-left: 20px;
+    color: white;
+    font-weight: bolder;
   }
 
   #curuser-money {
     font-size: 20px;
-    background: #D3D3D3;
     margin-left: 20px;
+    color: white;
+    font-weight: bolder;
   }
 
   #room-multiple {
     font-size: 20px;
-    background: #D3D3D3;
-    margin-right: 50px;
+    margin-right: 30px;
+    color: white;
+    font-weight: bolder;
   }
 
   .others-username {
+    color: white;
+    font-weight: bolder;
     font-size: 18px;
-    background: #D3D3D3;
   }
 
   .others-money {
     font-size: 15px;
-    background: #D3D3D3;
+    color: white;
+    font-weight: bolder;
+  }
+
+  .others-identity {
+    font-size: 15px;
+    color: white;
+    font-weight: bolder;
   }
 
   #prev-player {
@@ -364,6 +405,11 @@
     background-size: cover;
     border-radius: 10px;
     padding: 15px 9px;
+  }
+
+  .money-icon{
+    width: 20px;
+    margin-right: 4px;
   }
 
 </style>

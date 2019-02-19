@@ -1,6 +1,5 @@
 <template>
-  <div>
-
+  <div id="table-board-component">
     <!--叫分按钮-->
     <div id="bid-operation" v-show="showBidBtn">
       <button @click="bid(0)" class="bid-button">不叫</button>
@@ -11,8 +10,8 @@
 
     <!--出牌和不出按钮-->
     <div id="play-operation" v-show="showPlayBtn">
-      <button @click="playCard" class="operation-button" style="margin-right: 20px;">出牌</button>
-      <button @click="pass" v-show="showPassbtn" class="operation-button">不出</button>
+      <mu-button @click="playCard" color="primary" round style="margin-right: 20px;">出牌</mu-button>
+      <mu-button @click="pass" v-show="showPassbtn" color="error" round>不出</mu-button>
     </div>
 
     <!--当前玩家的牌-->

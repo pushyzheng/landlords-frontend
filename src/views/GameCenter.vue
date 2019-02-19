@@ -4,18 +4,36 @@
     <!--<audio loop="loop" :src="welcomeMusicUrl" autoplay="autoplay" />-->
 
     <h1 v-if="roomList.length == 0">当前没有房间</h1>
-    <div v-for="room in roomList" style="font-size: 20px;">
-      <a href="javascript:void(0)" @click="enterRoom(room)">{{ room.id }}</a>
-      <span v-if="room.status == 'PREPARING'">准备中</span>
-      <span v-else>游戏中</span>
-      <span>房间人数： {{ room.userList.length }}</span>
+    <!--房间列表-->
+    <div style="display: flex">
+      <RoomCard v-for="room in roomList" :room="room" />
     </div>
 
-    <div style="margin-top: 20px;">
-      <button @click="createRoom" class="operation-button">创建房间</button>
-      <button @click="getRoomList" class="operation-button">刷新</button>
-      <button @click="backToRoom" v-show="showBackToRoom" class="operation-button">返回房间</button>
-    </div>
+    <!--创建房间dialog-->
+    <mu-dialog width="360" transition="slide-bottom" fullscreen :open.sync="createRoomModal">
+      <mu-appbar color="primary" title="创建房间">
+        <mu-button slot="right" flat @click="createRoomModal=false">
+          <mu-icon value="close"></mu-icon>
+        </mu-button>
+      </mu-appbar>
+      <div style="padding: 24px;">
+        <mu-text-field v-model="roomName" label="房间名" icon="account_circle"/><br>
+        <mu-text-field v-model="password" label="请输入房间密码" icon="locked"/>
+        <br>
+        <mu-flex justify-content="center" align-items="center">
+          <mu-button round color="primary" large @click="createRoom">创建</mu-button>
+        </mu-flex>
+      </div>
+    </mu-dialog>
+
+    <br>
+    <mu-button @click="getRoomList" color="red" large round>刷新</mu-button>
+    <mu-button @click="backToRoom" v-show="showBackToRoom" color="primary" large round>返回房间</mu-button>
+
+    <!--创建房间按钮-->
+    <mu-button fab color="red" @click="createRoomModal=true" id="create-button">
+      <mu-icon value="add"></mu-icon>
+    </mu-button>
 
   </div>
 </template>
@@ -23,10 +41,16 @@
 <script>
   import enums from '../config/enums'
   import musicUrls from '../config/music'
+  import RoomCard from "../components/RoomCard";
 
   export default {
+    components: {RoomCard},
     data() {
       return {
+        createRoomModal: false,
+        roomName: null,
+        password: null,
+
         welcomeMusicUrl: musicUrls.welcome,
         roomList: []
       }
@@ -52,37 +76,10 @@
           error => alert('请求失败，请登录')
         )
       },
-      enterRoom(room) {
-        let curRoomId = localStorage.getItem('CURRENT_ROOM_ID');
-        if (curRoomId === room.id) {
-          this.$router.push({name: 'Room', params: {id: room.id}})
-          return;
-        }
-        if (room.userList.length >= 3) alert("人数已满，无法加入");
-        else if (room.status == enums.roomStatus.playing) alert('游戏已开始，无法加入');
-        else {
-          if (room.locked) {
-            var password = prompt("请输入房间的密码：");
-            if (password === null) return;
-          }
-          let body = {id: room.id, password: password};
-          this.$http.post(this.$urls.rooms.join, body).then(
-            response => {
-              alert('加入房间成功');
-              this.$router.push({name: 'Room', params: {id: room.id}})
-              localStorage.setItem('CURRENT_ROOM_ID', room.id);
-            }
-          ).catch(
-            error => alert(error.response.data.message)
-          );
-        }
-      },
       createRoom() {
-        let password = prompt("请输入房间的密码：");
-        let body = {password: password};
+        let body = {password: this.password};
         this.$http.post(this.$urls.rooms.create, body).then(
           response => {
-            alert('创建房间成功');
             let roomId = response.data.data.id;
             this.$router.push({name: 'Room', params: {id: roomId}})
             localStorage.setItem('CURRENT_ROOM_ID', roomId);
@@ -109,6 +106,12 @@
 
   #game-center-view {
     padding: 10px;
+  }
+
+  #create-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
   }
 
 

@@ -213,3 +213,65 @@ div[class*='suit']:after {
   -ms-transform: scale(1.05,1.05);
   transform: scale(1.05,1.05);
 }
+
+
+/* 手机端样式适应 */
+@media screen and (max-width:840px) {
+
+  /*牌数字的大小*/
+  .card p {
+    font-size: 20px;
+  }
+
+  div[class*='suit']:before {
+    position: absolute;
+    font-size: 12px;
+    left: 5px;
+    top: 25px;
+  }
+
+  div[class*='suit']:after {
+    position: absolute;
+    font-size: 18px;
+    right: 5px;
+    bottom: 5px;
+  }
+
+  /*牌的大小*/
+  .card {
+    width: 60px;
+    height: 85px;
+  }
+
+  /*方块数字*/
+  .suitdiamonds p {
+    left: 3px;
+    top: 0px;
+    color: #ff0000;
+  }
+
+  /*红桃数字*/
+  .suithearts p {
+    left: 3px;
+    top: 0px;
+    color: #ff0000;
+  }
+
+  /*梅花数字*/
+  .suitclubs p {
+    left: 3px;
+    top: 0px;
+  }
+
+  /*黑桃数字*/
+  .suitspades p {
+    left: 3px;
+    top: 0px;
+  }
+
+  /* 扑克牌层叠的大小 */
+  .overlapping {
+    margin-left: -38px;
+  }
+
+}

@@ -11,6 +11,9 @@
       <source src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Special/SpecSelectCard.mp3" type="audio/mp3" />
     </audio>
 
+    <!--不出音效-->
+    <audio id="pass-music" src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_buyao4.mp3"/>
+
     <!--游戏结束时音效-->
     <audio id="end-music" :src="endMusicUrl"/>
 
@@ -33,7 +36,8 @@
         normalAudio: null,
         selectAudio: null,
         endAudio: null,
-        outAudio: null
+        outAudio: null,
+        passAudio: null
       }
     },
     methods: {
@@ -69,13 +73,17 @@
             self.outAudio.play();
           }, 100)
         }
+      },
+      playPassMusic(user) {
+        this.passAudio.play();
       }
     },
     mounted() {
       this.normalAudio = document.getElementById('normal-music');
       this.selectAudio = document.getElementById('select-music');
       this.endAudio = document.getElementById('end-music');
-      this.outAudio = document.getElementById('out-music')
+      this.outAudio = document.getElementById('out-music');
+      this.passAudio = document.getElementById('pass-music');
     }
   }
 </script>

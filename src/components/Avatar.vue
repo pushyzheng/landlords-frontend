@@ -14,4 +14,11 @@
     border-radius: 50px;
     width: 60px;
   }
+
+  @media screen and (max-width:840px){
+    .round-avatar {
+      width: 45px;
+    }
+  }
+
 </style>
