@@ -1,6 +1,11 @@
 <template>
-  <div id="room-view" v-bind:style="roomViewStyleObj">
-    <GameAudio ref="gameAudio" />
+  <div id="room-view" v-bind:style="roomViewStyleObj" v-if="!isVertical">
+    <!--游戏音效组件-->
+    <GameAudio ref="gameAudio"/>
+
+    <mu-flex justify-content="center">
+      <TopCard :cards="room.topCards" v-if="room != null && showTopCards" />
+    </mu-flex>
 
     <!--其他玩家用户信息-->
     <div id="other-player-user">
@@ -20,13 +25,13 @@
           <img src="../assets/ok-left.png" style="width: 70px;" v-if="prevPlayer.ready">
         </div>
         <div class="remaining-cards" v-else>{{ prevPlayer.cardSize }}</div>
-        <CardList :cards="prevPlayer.recentCards" id="prev-player-recentcards" />
+        <CardList :cards="prevPlayer.recentCards" id="prev-player-recentcards"/>
       </div>
       <div v-else></div>
 
       <!--下家（右边玩家）-->
       <div id="next-player" v-if="nextPlayer != null">
-        <CardList :cards="nextPlayer.recentCards" id="next-player-recentcards" />
+        <CardList :cards="nextPlayer.recentCards" id="next-player-recentcards"/>
         <div v-if="gamePreparing">
           <img src="../assets/ok-right.png" style="width: 70px;" v-if="nextPlayer.ready">
         </div>
@@ -62,7 +67,7 @@
       <CardList :cards="curPlayer.recentCards" v-if="curPlayer != null"/>
     </div>
 
-    <TableBoard ref="tableBoard" :room="room" @selectCard="selectCardListener"/>
+    <TableBoard ref="tableBoard" :room="room" @selectCard="selectCardListener" @distributeCard="distributeListener" />
 
     <!--当前玩家的信息和状态栏-->
     <div id="my-info">
@@ -76,20 +81,27 @@
       </div>
       <div>
         <!--房间当前的倍数-->
-        <span id="room-multiple">当前倍数：{{ room == null ? 0 : room.multiple }}</span>
+        <span id="room-multiple" v-show="!gamePreparing">当前倍数：{{ room == null ? 0 : room.multiple }}</span>
       </div>
     </div>
 
     <!--结束时显示信息的Dialog-->
-    <mu-dialog title="Dialog" width="500" :open.sync="gameEndDialog">
-
+    <mu-dialog :title="gameEndDialogTitle" width="450" :open.sync="gameEndDialog">
+      <mu-list>
+        <mu-list-item avatar button :ripple="true" v-for="result in roundResult.resList">
+          <mu-list-item-title>{{ result.username }}（{{ result.identityName }}）</mu-list-item-title>
+          <mu-list-item-action>
+            <mu-badge :content="result.moneyChange"></mu-badge>
+          </mu-list-item-action>
+        </mu-list-item>
+      </mu-list>
       <div style="display: flex;justify-content: space-between">
-        <mu-button color="error" round large @click="gameEndDialog=false">确定</mu-button>
+        <mu-button color="error" round large @click="gameEndDialogSubmit">确定</mu-button>
         <mu-button color="primary" round large @click="continueGame">继续游戏</mu-button>
       </div>
     </mu-dialog>
-
   </div>
+  <VerticleTip v-else />
 </template>
 
 <script>
@@ -98,16 +110,20 @@
   import Avatar from "../components/Avatar";
   import CardList from "../components/PlayerCardList";
   import GameAudio from "../components/GameAudio";
+  import VerticleTip from "../components/VerticleTip";
+  import TopCard from "../components/TopCard";
 
   export default {
-    components: { GameAudio, CardList, Avatar, TableBoard },
+    components: {TopCard, VerticleTip, GameAudio, CardList, Avatar, TableBoard },
     data() {
       return {
         roomViewStyleObj: {
           height: document.documentElement.clientHeight + 'px'
         },
+        isVertical: false,          // 手机端是否是竖屏显示
         userPreparing: false,
         gameEndDialog: false,
+        showTopCards: false,
         prevPlayer: null,
         curPlayer: null,
         nextPlayer: null,
@@ -115,6 +131,7 @@
         roomId: this.$route.params.id,
         playerList: null,
         room: null,
+        roundResult: {winning: false},   // 一局之后结算的分数对象
         websocket: null,
         wsTimeoutObj: null
       }
@@ -126,17 +143,30 @@
       },
       curUser() {
         return this.$store.state.curUser;
+      },
+      gameEndDialogTitle() {
+        if (this.roundResult == null) return;
+        if (this.roundResult.winning == true) return '恭喜你！胜利了';
+        else return '很抱歉！失败了！'
       }
     },
     methods: {
+      /**
+       * 刷新页面和进入房间时获取房间信息数据
+       */
       getRoom() {
-        this.$http.get(this.$urls.rooms.getRoomById(this.roomId)).then(
+        this.$http.get(this.$urls.rooms.getRoomById(this.$route.params.id)).then(
           response => {
             this.room = response.data.data;
             this.playerList = this.room.playerList;
-            if (this.room.status === this.$enums.roomStatus.preparing) {
+            if (this.room.status === this.$enums.roomStatus.preparing) {  // 准备中
               this.getPlayerReady();
+            } else if (this.room.status === this.$enums.roomStatus.playing) { // 游戏中
+              if (this.room.stepNum != -1) {  // 尚未叫牌结束
+                this.showTopCards = true;
+              }
             }
+            this.$refs.tableBoard.getMyCards();
             this.getPrevAndNextPlayer();
           }
         ).catch(
@@ -148,6 +178,21 @@
             }
             this.$router.push({name: 'GameCenter'});
           }
+        );
+      },
+      /**
+       * 刷新房间和玩家的信息
+       */
+      refreshRoom() {
+        if (this.$route.params.id == undefined) return;
+        this.$http.get(this.$urls.rooms.getRoomById(this.$route.params.id)).then(
+          response => {
+            this.room = response.data.data;
+            this.playerList = response.data.data.playerList;
+            this.getPrevAndNextPlayer();
+          }
+        ).catch(
+          error => alert(error)
         );
       },
       exitRoom() {
@@ -162,11 +207,10 @@
         )
       },
       ready() {
-        this.userPreparing = false;
         let body = {roomId: this.roomId}
         this.$http.post(this.$urls.game.ready, body).then(
           response => {
-            console.log(response.data.data);
+            this.userPreparing = false;
           }
         ).catch(
           error => alert(error.response.data.message)
@@ -191,17 +235,12 @@
         )
       },
       gameEnd(data) {
+        this.gameEndDialog = true;
+        this.roundResult = data;
         this.$refs.gameAudio.pauseNormalMusic();
         this.$refs.gameAudio.playEndMusic(data.winning);
-        this.getRoom();
-        this.userPreparing = false;
+        this.refreshRoom();
         this.$refs.tableBoard.gameEndListener();
-
-        let str = "";
-        for (let i = 0; i < data.resList.length; i++) {
-          str += JSON.stringify(data.resList[i]) + "\n";
-        }
-        alert('游戏结束：\n' + "获胜方：" + data.winingIdentityName + "\n" + "比分情况：\n" + str);
       },
       /**
        * 计算出上家和下家的player对象
@@ -229,16 +268,15 @@
         }
         // 准备游戏消息处理
         else if (data.type === enums.wsType.unReadyGame || data.type === enums.wsType.readyGame) {
-          this.getRoom();
+          this.refreshRoom();
         }
         // 开始游戏消息处理
         else if (data.type === enums.wsType.startGame) {
-          // alert('开始游戏！');
-          this.$refs.tableBoard.getMyCards();
+          this.$refs.tableBoard.distributeCard();
         }
         // 玩家加入或者加入
         else if (data.type === enums.wsType.playerJoin || data.type === enums.wsType.playerExit) {
-          this.getRoom();
+          this.refreshRoom();
         }
         // 叫牌消息处理
         else if (data.type === enums.wsType.bid) {
@@ -246,17 +284,18 @@
         }
         // 叫牌结束
         else if (data.type === enums.wsType.bidEnd) {
-          this.getRoom();
+          this.refreshRoom();
+          this.showTopCards = true;
+          this.$refs.tableBoard.getMyCards();
         }
         // 通知玩家出牌
         else if (data.type === enums.wsType.pleasePlayCard) {
-          // alert('请出牌!!!')
           this.$refs.tableBoard.showPlay();
           this.$refs.tableBoard.getCanPass();
         }
         // 有玩家出牌
         else if (data.type === enums.wsType.playCard) {
-          this.getRoom();
+          this.refreshRoom();
           this.$refs.gameAudio.playOutMusic(data.cardType, data.number);
         }
         // 有玩家不出
@@ -298,19 +337,36 @@
       selectCardListener() {
         this.$refs.gameAudio.playSelectMusic();  // 播放选择牌音效
       },
-      continueGame() {
+      distributeListener() {
+        this.$refs.gameAudio.playDealAudio();  // 播放发牌音效
+      },
+      orientationchangeListener() {  // 处理横竖屏切换事件
+        location.reload();
+      },
+      continueGame() {  // 点击结算Dialog继续游戏触发的事件
+        this.$refs.gameAudio.playNormalMusic();
         this.gameEndDialog = false;
         this.ready();
+      },
+      gameEndDialogSubmit() {  // 点击结算Dialog确认触发的事件
+        this.userPreparing = true;
+        this.$refs.gameAudio.playNormalMusic();
+        this.gameEndDialog = false;
       }
     },
     created() {
-      this.getRoom();
-      if (localStorage.getItem('token') != null) {
-        this.connectWebsocket();
+      window.addEventListener('orientationchange', this.orientationchangeListener);  // 绑定横竖屏切换事件
+      if (document.documentElement.clientWidth < 500) {
+        this.isVertical = true;
+      } else {
+        this.getRoom();
+        if (localStorage.getItem('token') != null) {
+          this.connectWebsocket();
+        }
       }
     },
     mounted() {
-      // this.$refs.gameAudio.playNormalMusic();
+      this.$refs.gameAudio.playNormalMusic();
     }
   }
 </script>
@@ -336,7 +392,7 @@
     align-items: flex-end;
     justify-content: space-between;
     padding: 5px;
-    background-color: rgba(0,0,0,.54);
+    background-color: rgba(0, 0, 0, .54);
   }
 
   #curuser-username {
@@ -407,9 +463,19 @@
     padding: 15px 9px;
   }
 
-  .money-icon{
+  .money-icon {
     width: 20px;
     margin-right: 4px;
+  }
+
+  @media screen and (max-width:840px) {
+
+    .remaining-cards {
+      font-weight: bolder;
+      font-size: 15px;
+      padding: 7.5px 4.5px;
+      border-radius: 5px;
+    }
   }
 
 </style>

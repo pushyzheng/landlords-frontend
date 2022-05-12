@@ -45,7 +45,6 @@ body {
 .hand {
   zoom:1;
   display: flex;
-
 }
 
 .card {
@@ -78,21 +77,29 @@ body {
 
 /*红桃数字*/
 .suithearts p {
-  left: 5px;
-  top: 6px;
+  left: 3px;
+  top: 7px;
   color: #ff0000;
 }
 
 /*梅花数字*/
 .suitclubs p {
-  left: 8px;
-  top: 6px;
+  left: 3px;
+  top: 7px;
 }
 
 /*黑桃数字*/
 .suitspades p {
   left: 3px;
-  top: 9px;
+  top: 7px;
+}
+
+.bigjoker {
+  color: #ff0000;
+}
+
+.smalljoker {
+  color: #2B1916;
 }
 
 .suitdiamonds:before, .suitdiamonds:after {

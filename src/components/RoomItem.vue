@@ -22,25 +22,37 @@
         </mu-button>
       </mu-flex>
     </mu-dialog>
-    <mu-card>
-      <mu-card-header title="pushyzheng" sub-title="房主" id="card-header">
-        <mu-avatar slot="avatar">
-          <img src="https://i.loli.net/2019/02/17/5c6954a577d6b.gif">
+
+    <mu-list-item avatar button :ripple="true" @click="enterRoom" class="room-item">
+      <!--锁标志-->
+      <mu-list-item-action v-if="room.locked">
+        <mu-icon value="lock" color="red"></mu-icon>
+      </mu-list-item-action>
+      <mu-list-item-action v-else></mu-list-item-action>
+      <!--房主头像-->
+      <mu-list-item-action>
+        <mu-avatar>
+          <img :src="room.owner.avatar">
         </mu-avatar>
-      </mu-card-header>
-      <mu-card-title :title="room.id" sub-title="欢迎大家来斗地主啦！！！！！！！！" class="card-title"/>
-      <mu-card-actions>
-        <div style="display: flex;justify-content: space-between">
-          <div v-if="room.status == 'PREPARING'">
-            准备中
-          </div>
-          <div v-else>
-            游戏中
-          </div>
-          <mu-button flat @click="enterRoom">加入房间</mu-button>
-        </div>
-      </mu-card-actions>
-    </mu-card>
+      </mu-list-item-action>
+      <!--房间信息-->
+      <mu-list-item-content>
+        <mu-list-item-title>{{ room.id }}</mu-list-item-title>
+        <mu-list-item-sub-title>
+          {{ room.title }}
+        </mu-list-item-sub-title>
+      </mu-list-item-content>
+      <!--准备中图标-->
+      <mu-badge :content="room.userList.length" circle color="secondary" v-if="!room.ready">
+        <mu-button icon large>
+          <mu-icon value="group" color="white"></mu-icon>
+        </mu-button>
+      </mu-badge>
+      <!--游戏中图标-->
+      <mu-button ico n large v-else>
+        <mu-icon value="play_circle_filled" color="white"></mu-icon>
+      </mu-button>
+    </mu-list-item>
   </div>
 </template>
 
@@ -108,8 +120,24 @@
     margin-right: 20px;
   }
 
-  .card-title {
-    padding: 0px 16px;
+  .room-item {
+    padding: 15px 0;
+  }
+
+  .mu-item-title {
+    color: #ffffff;
+    font-size: 25px;
+    font-weight: bolder;
+  }
+
+  .mu-item-sub-title {
+    color: #ffffff;
+  }
+
+  @media screen and (max-width:840px) {
+    .room-item {
+      padding: 0;
+    }
   }
 
 </style>

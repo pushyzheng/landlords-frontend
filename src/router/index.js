@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import GameCenter from '@/views/GameCenter'
 import Login from '@/views/Login'
+import TestLogin from '@/views/TestLogin'
 import Room from '@/views/Room'
 import NotFound from '@/views/error/NotFound'
 import OAuth from '@/views/OAuth'
@@ -19,7 +20,7 @@ export default new Router({
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: TestLogin
     },
     {
       path: '/oauth/:token',

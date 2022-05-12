@@ -1,9 +1,12 @@
 <template>
   <div id="game-audio">
 
+    <!--欢乐斗地主经典准备音乐-->
+    <!--https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/MusicEx/MusicEx_Welcome.mp3-->
+
     <!--游戏中和准备时的音乐-->
     <audio id="normal-music" loop="loop">
-      <source src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/MusicEx/MusicEx_Welcome.mp3" type="audio/mp3" />
+      <source src="https://static.pushy.site/game/music/room-normal-4.mp3" type="audio/mp3" />
     </audio>
 
     <!--选择牌音效-->
@@ -13,6 +16,9 @@
 
     <!--不出音效-->
     <audio id="pass-music" src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_buyao4.mp3"/>
+
+    <!--发牌音效-->
+    <audio id="deal-music" src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Special/Special_Dispatch.mp3"/>
 
     <!--游戏结束时音效-->
     <audio id="end-music" :src="endMusicUrl"/>
@@ -37,7 +43,8 @@
         selectAudio: null,
         endAudio: null,
         outAudio: null,
-        passAudio: null
+        passAudio: null,
+        dealAudio: null
       }
     },
     methods: {
@@ -76,6 +83,9 @@
       },
       playPassMusic(user) {
         this.passAudio.play();
+      },
+      playDealAudio() {
+        this.dealAudio.play();
       }
     },
     mounted() {
@@ -84,6 +94,7 @@
       this.endAudio = document.getElementById('end-music');
       this.outAudio = document.getElementById('out-music');
       this.passAudio = document.getElementById('pass-music');
+      this.dealAudio = document.getElementById('deal-music');
     }
   }
 </script>

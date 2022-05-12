@@ -9,6 +9,12 @@ body {
   margin-left: -103px;;
 }
 
+/*被选择*/
+.selected {
+  position: relative;
+  bottom: 20px;
+}
+
 .move-up {
   margin-bottom: 20px;
 }
@@ -68,27 +74,35 @@ body {
   /*text-align: center;*/
   /*font: 100px/220px Georgia, serif;*/
   left: 3px;
-  top: 7px;
+  top: 5px;
   color: #ff0000;
 }
 
 /*红桃数字*/
 .suithearts p {
   left: 3px;
-  top: 7px;
+  top: 5px;
   color: #ff0000;
 }
 
 /*梅花数字*/
 .suitclubs p {
   left: 3px;
-  top: 7px;
+  top: 5px;
 }
 
 /*黑桃数字*/
 .suitspades p {
   left: 3px;
-  top: 7px;
+  top: 5px;
+}
+
+.bigjoker {
+  color: #ff0000;
+}
+
+.smalljoker {
+  color: #2B1916;
 }
 
 .suitdiamonds:before, .suitdiamonds:after {
@@ -227,7 +241,7 @@ div[class*='suit']:after {
 
   div[class*='suit']:after {
     position: absolute;
-    font-size: 18px;
+    font-size: 12px;
     right: 5px;
     bottom: 5px;
   }
@@ -267,6 +281,21 @@ div[class*='suit']:after {
   /* 扑克牌层叠的大小 */
   .overlapping {
     margin-left: -43px;
+  }
+
+  /*被选择*/
+  .selected {
+    position: relative;
+    bottom: 15px;
+  }
+
+}
+
+@media screen and (min-width:1024px) {
+
+  .card:hover {
+    background-color: #D3D3D3;
+    transition-duration: 0.3s;
   }
 
 }

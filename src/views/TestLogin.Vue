@@ -29,7 +29,7 @@ export default {
           location.reload();
         }
       ).catch(
-        error => alert(error.response.data.message)
+        error => alert(error)
       )
     },
     getUser() {

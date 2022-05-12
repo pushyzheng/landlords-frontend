@@ -15,7 +15,7 @@
             this.$store.commit('updateCurUser', response.data.data);
           }
         ).catch(
-          error => alert(error.response.data.message)
+          // error => alert(error.response.data.message)
         )
       }
     }
@@ -27,8 +27,6 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /*text-align: center;*/
     color: #2c3e50;
-    /*margin-top: 60px;*/
   }
 </style>

@@ -1,19 +1,20 @@
 <template>
-  <div class="hand">
-    <div class="card"
-         v-for="(card, index) in cards"
-         v-bind:class="{overlapping: isOverlapping(index),
-           suitspades: typeClass(card, 'SPADE'), suitclubs: typeClass(card, 'CLUB'),
+  <div id="topcard-component">
+    <div class="hand">
+      <div class="card"
+           v-for="(card, index) in cards"
+           v-bind:class="{ suitspades: typeClass(card, 'SPADE'), suitclubs: typeClass(card, 'CLUB'),
            suithearts: typeClass(card, 'HEART'), suitdiamonds: typeClass(card, 'DIAMOND'),
            bigjoker:  isBigJoker(card), smalljoker: isSmallJoker(card)}">
-      <p>{{ card.numberValue | cardNumberFilter }}</p>
+        <p>{{ card.numberValue | cardNumberFilter }}</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
   export default {
-    name: "CardList",
+    name: "TopCard",
     props: ['cards'],
     methods: {
       isOverlapping(index) {
@@ -44,5 +45,22 @@
 
 <style scoped>
   @import "../../static/css/player-card.css";
+
+  .hand {
+    zoom: 0.6
+  }
+
+  .card {
+    margin-right: 15px;
+  }
+
+
+  @media screen and (max-width:840px) {
+
+    #topcard-component {
+      display: none;
+    }
+
+  }
 
 </style>

@@ -1,5 +1,5 @@
-// let host = "api.landlord.pushy.site";
-let host = "192.168.0.111";
+// let host = "landlord.pushy.site/api";
+let host = "localhost:8080";
 
 let domain = 'http://' + host;
 
@@ -15,7 +15,8 @@ export default {
     myCards: domain + '/player/cards',
     isPlayerRound: domain + '/player/round',
     isReady: domain + '/player/ready',
-    canPass: domain + '/player/pass'
+    canPass: domain + '/player/pass',
+    canBid: domain + '/player/bidding'
   },
   rooms: {
     listRoom: domain + '/rooms',
