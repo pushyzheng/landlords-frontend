@@ -4,7 +4,7 @@
     <audio loop="loop" :src="welcomeMusicUrl" autoplay="autoplay"/>
 
     <mu-flex justify-content="center">
-      <h1>游戏大厅</h1>
+      <h1 style="color: white">游戏大厅</h1>
     </mu-flex>
 
     <!--没有房间显示的提示-->
@@ -22,23 +22,21 @@
       <RoomItem v-for="room in roomList" :room="room"/>
     </mu-list>
 
-    <!--创建房间dialog-->
-    <mu-dialog width="360" transition="slide-bottom" fullscreen :open.sync="createRoomModal">
-      <mu-appbar color="primary" title="创建房间">
-        <mu-button slot="right" flat @click="createRoomModal=false">
-          <mu-icon value="close"></mu-icon>
-        </mu-button>
-      </mu-appbar>
-      <div style="padding: 24px;">
-        <mu-text-field v-model="title" label="房间名" icon="account_circle"/>
-        <br>
-        <mu-text-field v-model="password" label="请输入房间密码" icon="locked"/>
-        <br>
-        <mu-flex justify-content="center" align-items="center">
-          <mu-button round color="primary" large @click="createRoom">创建</mu-button>
-        </mu-flex>
+    <Modal @submit="createRoom" title="创建新的房间" ref="createRoomModal">
+      <div>
+        <Alert :text="createRoomModalAlert" v-if="showCreateRoomModalAlert"/>
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">房间名:</label>
+            <input type="text" class="form-control" id="recipient-name" v-model="title">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">请输入房间密码:</label>
+            <input type="text" class="form-control" id="recipient-name" v-model="password">
+          </div>
+        </form>
       </div>
-    </mu-dialog>
+    </Modal>
 
     <br>
     <mu-flex justify-content="center">
@@ -46,9 +44,11 @@
     </mu-flex>
 
     <!--创建房间按钮-->
-    <mu-button fab color="red" @click="createRoomModal=true" id="create-button">
-      <mu-icon value="add"></mu-icon>
-    </mu-button>
+    <button type="button" class="btn btn-primary btn-lg"
+            id="create-button" @click="showCreateRoomModal">
+      +
+    </button>
+
     <!--刷新按钮-->
     <mu-button @click="getRoomList" color="primary" fab id="refresh-buttom">
       <mu-icon value="refresh"></mu-icon>
@@ -63,21 +63,24 @@ import enums from '../config/enums'
 import musicUrls from '../config/music'
 import RoomItem from "../components/RoomItem";
 import VerticleTip from "../components/VerticleTip";
+import Modal from "../components/Modal";
+import Alert from "../components/Alert";
 
 export default {
-  components: {VerticleTip, RoomItem},
+  components: {VerticleTip, RoomItem, Modal, Alert},
   data() {
     return {
-      isVerticle: false,
-      createRoomModal: false,
-      title: null,
-      password: null,
       gameCenterStyleObj: {
         height: document.documentElement.clientHeight + 'px'
       },
       roomListStyleObj: {
         minHeight: document.documentElement.clientHeight / 1.5 + 'px'
       },
+      isVerticle: false,
+      createRoomModalAlert: '',
+      showCreateRoomModalAlert: false,
+      title: null,
+      password: null,
       welcomeMusicUrl: musicUrls.welcome,
       roomList: []
     }
@@ -127,12 +130,22 @@ export default {
       this.$http.post(this.$urls.rooms.create, body).then(
         response => {
           let roomId = response.data.data.id;
-          this.$router.push({name: 'Room', params: {id: roomId}})
+          // this.$router.push({name: 'Room', params: {id: roomId}})
+          location.href = '/#/rooms/' + roomId
+          location.reload();
           localStorage.setItem('CURRENT_ROOM_ID', roomId);
         }
       ).catch(
-        error => alert(error.response.data.message)
+        error => {
+          this.$refs.createRoomModal.reset();
+          this.createRoomModalAlert = error.response.data.message
+          this.showCreateRoomModalAlert = true
+          console.warn(error.response.data.message)
+        }
       )
+    },
+    showCreateRoomModal() {
+      this.$refs.createRoomModal.toggle()
     },
     backToRoom() {
       this.$router.push({name: 'Room', params: {id: localStorage.getItem('CURRENT_ROOM_ID')}})
