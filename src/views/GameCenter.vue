@@ -3,6 +3,13 @@
     <!--欢迎音乐-->
     <audio loop="loop" :src="welcomeMusicUrl" autoplay="autoplay"/>
 
+    <a type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+       aria-controls="offcanvasRight" style="color: white;font-weight: bolder;float: right">
+      个人信息
+    </a>
+
+    <Profile/>
+
     <mu-flex justify-content="center">
       <h1 style="color: white">游戏大厅</h1>
     </mu-flex>
@@ -22,17 +29,20 @@
       <RoomItem v-for="room in roomList" :room="room"/>
     </mu-list>
 
-    <Modal @submit="createRoom" title="创建新的房间" ref="createRoomModal">
+    <Modal @submit="createRoom"
+           title="创建新的房间"
+           ref="createRoomModal"
+           header-img="/static/images/create-team.png">
       <div>
         <Alert :text="createRoomModalAlert" v-if="showCreateRoomModalAlert"/>
         <form>
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">房间名:</label>
-            <input type="text" class="form-control" id="recipient-name" v-model="title">
+          <div class="form-floating mb-3">
+            <input type="email" class="form-control" id="username-input" placeholder="房间名" v-model="title">
+            <label>房间名</label>
           </div>
-          <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">请输入房间密码:</label>
-            <input type="text" class="form-control" id="recipient-name" v-model="password">
+          <div class="form-floating">
+            <input type="password" class="form-control" id="password-input" placeholder="请输入房间密码" v-model="password">
+            <label>请输入房间密码</label>
           </div>
         </form>
       </div>
@@ -65,9 +75,10 @@ import RoomItem from "../components/RoomItem";
 import VerticleTip from "../components/VerticleTip";
 import Modal from "../components/Modal";
 import Alert from "../components/Alert";
+import Profile from "../components/Profile";
 
 export default {
-  components: {VerticleTip, RoomItem, Modal, Alert},
+  components: {VerticleTip, RoomItem, Modal, Alert, Profile},
   data() {
     return {
       gameCenterStyleObj: {

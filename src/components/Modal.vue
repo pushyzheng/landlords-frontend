@@ -23,6 +23,7 @@
                     @click="submit"
                     v-bind:class="{ 'btn-primary': submitBtn.isPrimary,'btn-success': submitBtn.isSuccess,
                     disabled: submitBtn.isDisabled }">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" v-if="submitBtn.isDisabled"></span>
               {{ submitBtn.text }}
             </button>
           </div>

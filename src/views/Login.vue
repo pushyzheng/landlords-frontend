@@ -28,6 +28,7 @@
 
 <script>
 import Modal from "../components/Modal";
+import axios from "axios";
 
 export default {
   name: "Login",
@@ -53,9 +54,10 @@ export default {
       }
       this.$http.post(this.$urls.auth.login, this.body)
         .then(response => {
-            // this.getUser();
+            let token = response.data.data
+            this.getUser(token);
             this.$refs.loginModal.showDirect()
-            localStorage.setItem('token', response.data.data);
+            localStorage.setItem('token', token);
             location.href = '/#/'
             location.reload();
           }
@@ -67,12 +69,15 @@ export default {
           }
         )
     },
-    getUser() {
-      this.$http.get(this.$urls.users.myself).then(
-        response => {
-          localStorage.setItem('user', JSON.stringify(response.data.data));
-        }
-      );
+    getUser(token) {
+      this.$http.defaults.headers.common['token'] = token;
+      this.$http.get(this.$urls.users.myself)
+        .then(response => {
+            let profile = response.data.data;
+            localStorage.setItem('user', JSON.stringify(profile));
+            this.$store.commit('updateCurUser', profile);
+          }
+        );
     },
     showLoginModal() {
       this.$refs.loginModal.toggle()

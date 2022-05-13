@@ -12,7 +12,5 @@ export default new Vuex.Store({
       state.curUser = value;
     }
   },
-  actions: {
-
-  }
+  actions: {}
 })

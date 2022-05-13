@@ -7,7 +7,7 @@
     </button>
 
     <Modal title="NewMessage" @submit="submit" ref="modal" id="exampleModal"
-      header-img="/static/images/lock.png">
+           header-img="/static/images/lock.png">
       <form>
         <div class="mb-3">
           <label for="recipient-name" class="col-form-label">Recipient:</label>
@@ -29,6 +29,11 @@ import Alert from "../components/Alert";
 export default {
   components: {Modal, Alert},
   name: "Components",
+  data() {
+    return {
+      showLoading: false
+    }
+  },
   methods: {
     toggle() {
       this.$refs.modal.toggle()
@@ -44,6 +49,9 @@ export default {
       setTimeout(function () {
         self.$refs.modal.showDirect();
       }, 2000)
+    },
+    submit2() {
+      this.showLoading = true
     }
   }
 }

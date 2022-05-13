@@ -9,6 +9,7 @@ export default {
     qqLogin: domain + '/qqLogin'
   },
   users: {
+    update: domain + '/users',
     myself: domain + '/users/myself'
   },
   player: {
