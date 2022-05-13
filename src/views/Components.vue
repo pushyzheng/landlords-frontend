@@ -6,6 +6,10 @@
       toggle
     </button>
 
+    <button class="btn btn-primary" @click="showToast">
+      show toast
+    </button>
+
     <Modal title="NewMessage" @submit="submit" ref="modal" id="exampleModal"
            header-img="/static/images/lock.png">
       <form>
@@ -19,15 +23,18 @@
         </div>
       </form>
     </Modal>
+
+    <Toast id="test-toast" ref="testToast"/>
   </div>
 </template>
 
 <script>
-import Modal from "../components/Modal";
-import Alert from "../components/Alert";
+import Modal from "../components/boostrap/Modal";
+import Alert from "../components/boostrap/Alert";
+import Toast from "../components/boostrap/Toast";
 
 export default {
-  components: {Modal, Alert},
+  components: {Modal, Alert, Toast},
   name: "Components",
   data() {
     return {
@@ -52,6 +59,9 @@ export default {
     },
     submit2() {
       this.showLoading = true
+    },
+    showToast() {
+      this.$refs.testToast.showWithTimeouit(2000)
     }
   }
 }

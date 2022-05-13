@@ -19,6 +19,8 @@ export default {
           console.error(error.response.data.message)
         }
       )
+    } else {
+      this.$router.push({name: 'Login'})
     }
   }
 }

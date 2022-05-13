@@ -9,6 +9,9 @@ export default new Vuex.Store({
   },
   mutations: {
     updateCurUser(state, value) {
+      if (value.avatar == null || value.avatar.length === 0) {
+        value.avatar = 'static/images/default-avatar.png'
+      }
       state.curUser = value;
     }
   },

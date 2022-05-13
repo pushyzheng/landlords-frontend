@@ -32,6 +32,8 @@ export default {
 
     pleasePlayCard: 'PLEASE_PLAY_CARD',
 
+    chat: 'CHAT',
+
     pong: 'PONG'
   }
 

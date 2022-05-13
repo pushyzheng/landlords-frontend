@@ -73,8 +73,8 @@ import enums from '../config/enums'
 import musicUrls from '../config/music'
 import RoomItem from "../components/RoomItem";
 import VerticleTip from "../components/VerticleTip";
-import Modal from "../components/Modal";
-import Alert from "../components/Alert";
+import Modal from "../components/boostrap/Modal";
+import Alert from "../components/boostrap/Alert";
 import Profile from "../components/Profile";
 
 export default {

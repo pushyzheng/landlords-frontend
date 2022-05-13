@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import Modal from "../components/Modal";
+import Modal from "../components/boostrap/Modal";
 import axios from "axios";
 
 export default {

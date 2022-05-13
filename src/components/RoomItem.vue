@@ -48,8 +48,8 @@
 </template>
 
 <script>
-import Modal from "./Modal";
-import Alert from "./Alert";
+import Modal from "./boostrap/Modal";
+import Alert from "./boostrap/Alert";
 
 export default {
   name: "RoomCard",

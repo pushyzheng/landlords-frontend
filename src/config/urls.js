@@ -1,4 +1,4 @@
-// let host = "landlord.pushy.site/api";
+// let host = "api.landlords.pushyzheng.com";
 let host = "localhost:8080";
 
 let domain = 'http://' + host;
@@ -35,6 +35,9 @@ export default {
     bid: domain + '/games/bid',
     play: domain + '/games/play',
     pass: domain + '/games/pass'
+  },
+  chat: {
+    send: domain + "/chat"
   },
   ws: {
     connect(token) {
