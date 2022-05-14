@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-      <div :id="id" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div :id="id" class="toast" role="alert" aria-atomic="true">
         <div class="toast-header">
           <img :src="headerImg" alt="" id="header-img">
           <strong class="me-auto">
@@ -44,7 +44,10 @@ export default {
     },
     showWithTimeouit(t) {
       this.show();
-      setTimeout(() => this.hide(), t)
+      // setTimeout(() => {
+      //   console.log('timeout...')
+      //   this.hide();
+      // }, t)
     },
     hide() {
       this.getBootstrapToast().hide();

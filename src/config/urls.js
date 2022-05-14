@@ -21,7 +21,7 @@ export default {
   },
   rooms: {
     listRoom: domain + '/rooms',
-    getRoomById (id) {
+    getRoomById(id) {
       return domain + `/rooms/${id}`
     },
     create: domain + '/rooms',
@@ -44,5 +44,4 @@ export default {
       return `ws://${host}/ws?token=${token}`
     }
   }
-
 }

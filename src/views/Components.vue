@@ -1,14 +1,34 @@
 <template>
   <div id="components">
-    <Alert text="hello" type="danger"></Alert>
+    <div>
+      <h1>alert</h1>
+      <Alert text="hello" type="danger"></Alert>
+    </div>
 
-    <button class="btn btn-primary" @click="toggle">
-      toggle
-    </button>
+    <div>
+      <h1>modal</h1>
+      <button class="btn btn-primary" @click="toggle">
+        show modal
+      </button>
+    </div>
 
-    <button class="btn btn-primary" @click="showToast">
-      show toast
-    </button>
+    <div>
+      <h1>Toast</h1>
+      <button class="btn btn-primary" @click="showToast">
+        show toast
+      </button>
+    </div>
+
+    <div>
+      <h1>countdown</h1>
+      <button class="btn btn-primary" @click="startCountdown">
+        start coutdown
+      </button>
+
+      <div style="background: black">
+        <Countdown ref="countdown"/>
+      </div>
+    </div>
 
     <Modal title="NewMessage" @submit="submit" ref="modal" id="exampleModal"
            header-img="/static/images/lock.png">
@@ -32,9 +52,10 @@
 import Modal from "../components/boostrap/Modal";
 import Alert from "../components/boostrap/Alert";
 import Toast from "../components/boostrap/Toast";
+import Countdown from "../components/Countdown";
 
 export default {
-  components: {Modal, Alert, Toast},
+  components: {Modal, Alert, Toast, Countdown},
   name: "Components",
   data() {
     return {
@@ -62,6 +83,9 @@ export default {
     },
     showToast() {
       this.$refs.testToast.showWithTimeouit(2000)
+    },
+    startCountdown() {
+      this.$refs.countdown.start(30)
     }
   }
 }

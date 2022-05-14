@@ -32,11 +32,13 @@
         </div>
         <div class="remaining-cards" v-else>{{ prevPlayer.cardSize }}</div>
         <CardList :cards="prevPlayer.recentCards" id="prev-player-recentcards"/>
+        <Countdown style="margin-left: 30px;" v-if="countdown.prev" ref="countdownPrev"/>
       </div>
       <div v-else></div>
 
       <!--下家（右边玩家）-->
       <div id="next-player" v-if="nextPlayer != null">
+        <Countdown style="margin-right: 30px;" v-if="countdown.next" ref="countdownNext"/>
         <CardList :cards="nextPlayer.recentCards" id="next-player-recentcards"/>
         <div v-if="gamePreparing">
           <img src="../assets/ok-right.png" style="width: 70px;" v-if="nextPlayer.ready">
@@ -123,9 +125,10 @@ import GameAudio from "../components/GameAudio";
 import VerticleTip from "../components/VerticleTip";
 import TopCard from "../components/TopCard";
 import Toast from "../components/boostrap/Toast";
+import Countdown from "../components/Countdown";
 
 export default {
-  components: {TopCard, VerticleTip, GameAudio, CardList, Avatar, TableBoard, Toast},
+  components: {Countdown, TopCard, VerticleTip, GameAudio, CardList, Avatar, TableBoard, Toast},
   data() {
     return {
       roomViewStyleObj: {
@@ -151,7 +154,11 @@ export default {
         right: '',
         headerImg: ''
       },
-      chatContent: ''
+      chatContent: '',
+      countdown: {
+        prev: false,
+        next: false
+      }
     }
   },
   computed: {
@@ -189,12 +196,15 @@ export default {
         }
       ).catch(
         error => {
-          if (error.response.status == 404) {
-            alert('该房间不存在，将返回大厅');
-          } else {
-            alert('发生未知错误，返回大厅： \n' + error);
+          console.error(error)
+          if (error.response != undefined) {
+            if (error.response.status == 404) {
+              alert('该房间不存在，将返回大厅');
+            } else {
+              alert('发生未知错误，返回大厅： \n' + error);
+            }
+            this.$router.push({name: 'GameCenter'});
           }
-          this.$router.push({name: 'GameCenter'});
         }
       );
     },
@@ -265,14 +275,33 @@ export default {
      */
     getPrevAndNextPlayer() {
       let playerList = this.room.playerList;
+      let prevPlayerId = -1
+      let nextPlayerId = -1;
       for (let i = 0; i < playerList.length; i++) {
         if (playerList[i].user.id == this.curUser.id) {
           this.curPlayer = playerList[i];
-          let prevPlayerId = this.curPlayer.id == 1 ? 3 : this.curPlayer.id - 1;
-          let nextPlayerId = this.curPlayer.id == 3 ? 1 : this.curPlayer.id + 1;
+          prevPlayerId = this.curPlayer.id == 1 ? 3 : this.curPlayer.id - 1;
+          nextPlayerId = this.curPlayer.id == 3 ? 1 : this.curPlayer.id + 1;
           this.prevPlayer = playerList[prevPlayerId - 1];
           this.nextPlayer = playerList[nextPlayerId - 1];
         }
+      }
+      let curPlayer = this.room.stepNum % 3;
+      if (curPlayer === nextPlayerId) {
+        this.countdown.next = true;
+        this.countdown.prev = false;
+        setTimeout(() => {
+          this.$refs.countdownNext.start(this.room.countdown)
+        }, 100)
+      } else if (curPlayer === prevPlayerId) {
+        this.countdown.next = false
+        this.countdown.prev = true;
+        setTimeout(() => {
+          this.$refs.countdownPrev.start(this.room.countdown)
+        }, 100)
+      } else {
+        this.countdown.prev = false;
+        this.countdown.next = false;
       }
     },
     /**
@@ -432,7 +461,7 @@ export default {
 
 #my-info {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
   padding: 5px;
   background-color: rgba(0, 0, 0, .54);
