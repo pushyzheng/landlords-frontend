@@ -2,10 +2,12 @@
   <div id="table-board-component">
     <!--叫分按钮-->
     <div id="bid-operation" v-show="showBidBtn">
-      <mu-button @click="bid(0)" class="bid-button" color="primary">不叫</mu-button>
-      <mu-button @click="bid(1)" class="bid-button">1分</mu-button>
-      <mu-button @click="bid(2)" class="bid-button">2分</mu-button>
-      <mu-button @click="bid(3)" class="bid-button">3分</mu-button>
+      <div class="btn-group btn-group-lg" role="group" aria-label="Basic radio toggle button group">
+        <button type="button" class="btn btn-secondary" @click="bid(0)">不叫</button>
+        <button type="button" class="btn btn-danger" @click="bid(1)">1 分</button>
+        <button type="button" class="btn btn-danger" @click="bid(2)">2 分</button>
+        <button type="button" class="btn btn-danger" @click="bid(3)">3 分</button>
+      </div>
     </div>
 
     <!--出牌和不出按钮-->
@@ -14,8 +16,14 @@
         <div style="display: flex;justify-content: center;margin-bottom: 10px;">
           <Countdown ref="countdown"/>
         </div>
-        <mu-button @click="pass" v-show="showPassbtn" color="error" round>不出</mu-button>
-        <mu-button @click="playCard" color="primary" round style="margin-left: 20px;">出牌</mu-button>
+        <div style="display: flex;justify-content: center">
+          <button type="button" class="btn btn-secondary" style="margin-right: 2rem;" @click="pass" v-show="showPassbtn">
+            不出
+          </button>
+          <button type="button" class="btn btn-danger" @click="playCard">
+            出牌
+          </button>
+        </div>
       </div>
     </div>
 
@@ -98,7 +106,7 @@ export default {
             // 模拟发牌的动画，通过一个Interval函数来执行
             this.dealInterval = setInterval(this.dealIntervalMethod, 220);
           })
-          .catch(error => alert(error.response.data.message))
+          .catch(error => this.$notif.warning(error.response.data.message))
     },
     /**
      * 获取手中的牌
@@ -109,12 +117,13 @@ export default {
           .then(response => {
             this.myCardList = response.data.data;
           })
-          .catch(error => alert(error.response.data.message))
+          .catch(error => this.$notif.warning(error.response.data.message))
     },
     dealIntervalMethod() {
       if (this.simulationIndex == this.cards.length) {  // 发牌结束
         clearInterval(this.dealInterval);
         this.simulationIndex = 0;
+        this.showBid()
       } else {
         this.myCardList.push(this.cards[this.simulationIndex]);
         this.simulationIndex++;
@@ -163,7 +172,7 @@ export default {
             this.selectCardList = [];
             this.getMyCards();
           })
-          .catch(error => alert(error.response.data.message));
+          .catch(error => this.$notif.warning(error.response.data.message));
     },
     pass() {
       this.$http.post(this.$urls.game.pass)
@@ -172,7 +181,7 @@ export default {
             this.showPlayBtn = false;
             this.selectCardList = [];
           })
-          .catch(error => alert(error.response.data.message))
+          .catch(error => this.$notif.warning(error.response.data.message))
     },
     /**
      * 查询是否为当前玩家出牌回合
@@ -184,21 +193,21 @@ export default {
               this.showPlay();
             }
           })
-          .catch(error => alert(error.response.data.message))
+          .catch(error => this.$notif.warning(error.response.data.message))
     },
     getCanPass() {
       this.$http.get(this.$urls.player.canPass)
           .then(response => {
             this.showPassbtn = response.data.data
           })
-          .catch(error => alert(error.response.data.message))
+          .catch(error => this.$notif.warning(error.response.data.message))
     },
     getCanBid() {
       this.$http.get(this.$urls.player.canBid)
           .then(response => {
             this.showBidBtn = response.data.data
           })
-          .catch(error => alert(error.response.data.message))
+          .catch(error => this.$notif.warning(error.response.data.message))
     },
     sortNumber(a, b) {
       return a - b;

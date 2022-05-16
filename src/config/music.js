@@ -48,9 +48,19 @@ export default {
     AIRCRAFT: 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_feiji.mp3',
     AIRCRAFT_WITH_WINGS: 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_feiji.mp3',
     FOUR_WITH_TWO: 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_sidaier.mp3'
+  },
+  chat: {
+    '1': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_1.mp3',
+    '2': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_2.mp3',
+    '3': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_3.mp3',
+    '4': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_4.mp3',
+    '5': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_5.mp3',
+    '6': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_6.mp3',
+    '7': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_7.mp3',
+    '8': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_8.mp3',
+    '9': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_9.mp3',
+    '10': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_10.mp3',
+    '11': 'static/audio/102840711-1-208 00_01_27.90-00_01_30.90.mp3',
+    '12': 'static/audio/lbw_boom.mp3',
   }
 }
-
-
-// 对2 https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_dui2.mp3
-// 对3 https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_dui3.mp3

@@ -1,4 +1,3 @@
-<script src="../../pcomy/pcomy-vue/src/store/index.js"></script>
 <template>
   <div id="app">
     <router-view/>
@@ -9,18 +8,24 @@
 export default {
   name: 'App',
   created() {
-    if (localStorage.getItem('token') != null) {
-      this.$http.get(this.$urls.users.myself).then(
-        response => {
-          this.$store.commit('updateCurUser', response.data.data);
-        }
-      ).catch(
-        error => {
-          console.error(error.response.data.message)
-        }
-      )
-    } else {
+    if (localStorage.getItem('token') == null) {
       this.$router.push({name: 'Login'})
+    } else {
+      this.getUserInfo();
+    }
+  },
+  methods: {
+    getUserInfo() {
+      this.$http.get(this.$urls.users.myself)
+        .then(response => {
+          this.$store.commit('updateCurUser', response.data.data);
+        })
+        .catch(error => {
+          if (error.message === 'Network Error') {
+            this.$router.push({name: 'ServerError'})
+          }
+          console.log(error.response)
+        })
     }
   }
 }
@@ -28,9 +33,7 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
 }
 </style>

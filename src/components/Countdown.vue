@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 style="color: white" v-if="this.countdown > 0">⏰ {{ countdown }}</h2>
-    <h2 style="color: red" v-else>⏰ 出牌超时</h2>
+    <h4 style="color: white" v-else>⏰ 超时啦~</h4>
   </div>
 </template>
 

@@ -25,6 +25,9 @@
           <button class="btn btn-primary" type="button" @click="submitUpdate">
             更新资料
           </button>
+          <button class="btn btn-secondary" type="button" @click="logout">
+            退出登录
+          </button>
         </div>
       </div>
     </div>
@@ -49,13 +52,12 @@ export default {
   },
   created() {
     this.$http.get(this.$urls.users.myself)
-      .then(response => {
+        .then(response => {
           this.profile = response.data.data
           if (this.profile.avatar == null || this.profile.avatar.length == 0) {
             this.profile.avatar = 'static/images/default-avatar.png'
           }
-        }
-      );
+        });
   },
   mounted() {
 
@@ -63,13 +65,20 @@ export default {
   methods: {
     submitUpdate() {
       this.$http.put(this.$urls.users.update, this.profile)
-        .then(response => {
-            alert('更新成功')
+          .then(response => {
+            this.$notif.success('更新成功')
             console.log(response.data)
-          }
-        ).catch(error => {
-          alert('更新失败')
-      })
+          })
+          .catch(error => {
+            this.$notif.error('更新失败')
+          })
+    },
+    logout() {
+      if (confirm('确定要退出登录吗?')) {
+        localStorage.removeItem('token')
+        this.$router.push({name: 'Login'})
+        this.$notif.success('成功退出登录')
+      }
     }
   }
 }

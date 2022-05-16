@@ -1,13 +1,24 @@
 <template>
   <div id="room-view" v-bind:style="roomViewStyleObj" v-if="!isVertical">
+    <!--左下角消息通知-->
     <Toast id="chat-toast"
            :header="toast.header"
            :body="toast.body"
            :right="toast.right"
            :header-img="toast.headerImg"
            ref="chatToast"/>
+
     <!--游戏音效组件-->
     <GameAudio ref="gameAudio"/>
+
+    <!-- 右上角的背景音乐开关 -->
+    <div class="form-check form-switch" style="position: fixed;top: 20px;right: 20px;">
+      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+             @change="pauseBGM" v-model="bgmSwtich">
+      <label class="form-check-label" for="flexSwitchCheckDefault" style="color: white">
+        背景音乐
+      </label>
+    </div>
 
     <mu-flex justify-content="center">
       <TopCard :cards="room.topCards" v-if="room != null && showTopCards"/>
@@ -62,11 +73,20 @@
     <!--准备和退出房间操作按钮-->
     <mu-flex justify-content="center" align-items="center">
       <div v-if="userPreparing">
-        <mu-button @click="ready" v-show="gamePreparing" color="primary" large round>准备</mu-button>
-        <mu-button @click="exitRoom" v-show="gamePreparing" color="error" large round>退出房间</mu-button>
+        <button type="button" class="btn btn-primary btn-lg" style="margin-right: 1rem;border-radius: 1.3rem"
+                @click="ready" v-show="gamePreparing">
+          &nbsp;&nbsp;准备&nbsp;&nbsp;
+        </button>
+        <button type="button" class="btn btn-danger btn-lg" style="border-radius: 1.3rem"
+                @click="exitRoom" v-show="gamePreparing">
+          &nbsp;退出房间&nbsp;
+        </button>
       </div>
       <div v-else>
-        <mu-button @click="unReady" v-show="gamePreparing" color="success" large round>取消准备</mu-button>
+        <button type="button" class="btn btn-secondary btn-lg" style="margin-right: 1rem;border-radius: 1.3rem"
+                @click="unReady" v-show="gamePreparing">
+          &nbsp;&nbsp;取消准备&nbsp;&nbsp;
+        </button>
       </div>
     </mu-flex>
 
@@ -75,7 +95,9 @@
       <CardList :cards="curPlayer.recentCards" v-if="curPlayer != null"/>
     </div>
 
-    <TableBoard ref="tableBoard" :room="room" @selectCard="selectCardListener" @distributeCard="distributeListener"/>
+    <TableBoard ref="tableBoard" :room="room"
+                @selectCard="selectCardListener"
+                @distributeCard="distributeListener"/>
 
     <!--当前玩家的信息和状态栏-->
     <div id="my-info">
@@ -89,7 +111,22 @@
       </div>
       <div style="display: flex">
         <input type="text" class="form-control" id="chat-input" v-model="chatContent">
-        <button class="btn btn-primary" @click="sendChatMessage">send</button>
+        <div class="btn-group">
+          <button class="btn btn-secondary btn-lg" type="button" @click="sendChatMessage(0, chatContent)">
+            send
+          </button>
+          <button type="button" class="btn btn-lg btn-secondary dropdown-toggle dropdown-toggle-split"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="visually-hidden">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="javascript:void(0)"
+                   v-for="msg in defaultMessage"
+                   v-bind:key="msg.content"
+                   @click="sendChatMessage(msg.type, msg.content)">
+              {{ msg.content }}</a></li>
+          </ul>
+        </div>
       </div>
       <div>
         <!--房间当前的倍数-->
@@ -126,14 +163,17 @@ import VerticleTip from "../components/VerticleTip";
 import TopCard from "../components/TopCard";
 import Toast from "../components/boostrap/Toast";
 import Countdown from "../components/Countdown";
+import chatConfig from '../config/chat'
 
 export default {
   components: {Countdown, TopCard, VerticleTip, GameAudio, CardList, Avatar, TableBoard, Toast},
   data() {
     return {
+      defaultMessage: chatConfig.defaultMessage,
       roomViewStyleObj: {
         height: document.documentElement.clientHeight + 'px'
       },
+      bgmSwtich: true,
       isVertical: false,          // 手机端是否是竖屏显示
       userPreparing: false,
       gameEndDialog: false,
@@ -180,8 +220,8 @@ export default {
      * 刷新页面和进入房间时获取房间信息数据
      */
     getRoom() {
-      this.$http.get(this.$urls.rooms.getRoomById(this.$route.params.id)).then(
-        response => {
+      this.$http.get(this.$urls.rooms.getRoomById(this.$route.params.id))
+        .then(response => {
           this.room = response.data.data;
           this.playerList = this.room.playerList;
           if (this.room.status === this.$enums.roomStatus.preparing) {  // 准备中
@@ -192,10 +232,11 @@ export default {
             }
           }
           this.$refs.tableBoard.getMyCards();
-          this.getPrevAndNextPlayer();
-        }
-      ).catch(
-        error => {
+          if (this.curPlayer == null || this.curPlayer == undefined) {
+            setTimeout(this.getPrevAndNextPlayer, 100)
+          }
+        })
+        .catch(error => {
           console.error(error)
           if (error.response != undefined) {
             if (error.response.status == 404) {
@@ -205,8 +246,7 @@ export default {
             }
             this.$router.push({name: 'GameCenter'});
           }
-        }
-      );
+        });
     },
     /**
      * 刷新房间和玩家的信息
@@ -223,45 +263,44 @@ export default {
         error => alert(error)
       );
     },
+    /**
+     * 退出房间
+     */
     exitRoom() {
-      let body = {id: this.roomId}
-      this.$http.post(this.$urls.rooms.exit, body).then(
-        response => {
+      this.$http.post(this.$urls.rooms.exit, {id: this.roomId})
+        .then(response => {
           localStorage.removeItem('CURRENT_ROOM_ID');
           this.$router.push({name: 'GameCenter'});
-        }
-      ).catch(
-        error => alert(error.response.data.message)
-      )
+        })
+        .catch(error => alert(error.response.data.message))
     },
+    /**
+     * 准备
+     */
     ready() {
-      let body = {roomId: this.roomId}
-      this.$http.post(this.$urls.game.ready, body).then(
-        response => {
-          this.userPreparing = false;
-        }
-      ).catch(
-        error => alert(error.response.data.message)
-      )
+      this.$http.post(this.$urls.game.ready, {roomId: this.roomId})
+        .then(response => this.userPreparing = false)
+        .catch(error => alert(error.response.data.message))
     },
+    /**
+     * 取消准备
+     */
     unReady() {
-      this.$http.post(this.$urls.game.unReady).then(
-        response => {
-          this.userPreparing = true;
-        }
-      ).catch(
-        error => alert(error.response.data.message)
-      )
+      this.$http.post(this.$urls.game.unReady)
+        .then(response => this.userPreparing = true)
+        .catch(error => alert(error.response.data.message))
     },
+    /**
+     * 查看当前用户是否是准备状态
+     */
     getPlayerReady() {
-      this.$http.get(this.$urls.player.isReady).then(
-        response => {
-          this.userPreparing = !response.data.data;
-        }
-      ).catch(
-        error => alert(error)
-      )
+      this.$http.get(this.$urls.player.isReady)
+        .then(response => this.userPreparing = !response.data.data)
+        .catch(error => alert(error))
     },
+    /**
+     * 游戏结束
+     */
     gameEnd(data) {
       this.gameEndDialog = true;
       this.roundResult = data;
@@ -282,18 +321,23 @@ export default {
           this.curPlayer = playerList[i];
           prevPlayerId = this.curPlayer.id == 1 ? 3 : this.curPlayer.id - 1;
           nextPlayerId = this.curPlayer.id == 3 ? 1 : this.curPlayer.id + 1;
+          console.log(`cur: ${this.curPlayer.id}, prevPlayerId: ${prevPlayerId}, nextPlayerId: ${nextPlayerId}`)
           this.prevPlayer = playerList[prevPlayerId - 1];
           this.nextPlayer = playerList[nextPlayerId - 1];
+          console.log(playerList)
+          console.log(`cur: ${JSON.stringify(this.curPlayer)}, prev: ${JSON.stringify(this.prevPlayer)}, next: ${this.nextPlayer}`)
         }
       }
-      let curPlayer = this.room.stepNum % 3;
-      if (curPlayer === nextPlayerId) {
+      let cur = this.room.stepNum % 3;
+      if (cur == 0) cur = 3;
+
+      if (cur === nextPlayerId) {
         this.countdown.next = true;
         this.countdown.prev = false;
         setTimeout(() => {
           this.$refs.countdownNext.start(this.room.countdown)
         }, 100)
-      } else if (curPlayer === prevPlayerId) {
+      } else if (cur === prevPlayerId) {
         this.countdown.next = false
         this.countdown.prev = true;
         setTimeout(() => {
@@ -327,7 +371,7 @@ export default {
       }
       // 叫牌消息处理
       else if (data.type === enums.wsType.bid) {
-        this.$refs.tableBoard.showBid();
+        // this.$refs.tableBoard.showBid();
       }
       // 叫牌结束
       else if (data.type === enums.wsType.bidEnd) {
@@ -347,6 +391,7 @@ export default {
       }
       // 有玩家不出
       else if (data.type === enums.wsType.pass) {
+        this.refreshRoom();
         this.$refs.gameAudio.playPassMusic(data.user);
       }
       // 游戏结束
@@ -360,6 +405,8 @@ export default {
       let self = this;
       if ('WebSocket' in window) {
         this.websocket = new WebSocket(this.$urls.ws.connect(localStorage.getItem('token')));
+      } else {
+        this.$notif.error('你的浏览器不支持 WebSocket, 将影响游戏功能使用')
       }
       this.websocket.onmessage = this.onWsMessage;
       this.websocket.onopen = function () {
@@ -373,11 +420,11 @@ export default {
         console.log('websocket断开连接了，尝试重连。。。');
       }
     },
+    /**
+     * 周期性向 Server 上报消息, 保证不掉线
+     */
     startWsTimeOut() {
-      let self = this;
-      this.wsTimeoutObj = setTimeout(function () {
-        self.websocket.send("ping");
-      }, 10000)
+      this.wsTimeoutObj = setTimeout(() => this.websocket.send("ping"), 10000)
     },
     resetWsTimeOut() {
       clearTimeout(this.wsTimeoutObj);
@@ -402,6 +449,16 @@ export default {
       this.$refs.gameAudio.playNormalMusic();
       this.gameEndDialog = false;
     },
+    pauseBGM(e) {
+      if (!this.bgmSwtich) {
+        this.$refs.gameAudio.pauseNormalMusic()
+      } else {
+        this.$refs.gameAudio.playNormalMusic()
+      }
+    },
+    /**
+     * 处理聊天消息
+     */
     chat(message) {
       let sender = message.sender
       if (sender != undefined) {
@@ -411,31 +468,32 @@ export default {
       this.toast.body = message.content
       this.toast.right = message.createTime
       this.$refs.chatToast.showWithTimeouit(3000)
+      this.$refs.gameAudio.playChatAudio(message.typeId)
     },
-    sendChatMessage() {
-      let body = {
-        'content': this.chatContent,
-        'dimension': 'ROOM'
+    /**
+     * 发送聊天消息
+     */
+    sendChatMessage(type, content) {
+      if (type === 0 && content.length == 0) {
+        this.$notif.warning('发送消息不能为空')
+        return
       }
-      this.$http.post(this.$urls.chat.send, body).then(
-        response => {
-          this.chatContent = ''
-        }
-      ).catch(
-        error => alert(error.response.data.message)
-      )
+      let body = {type: type, content: content, dimension: 'ROOM'}
+      this.$http.post(this.$urls.chat.send, body)
+        .then(response => this.chatContent = '')
+        .catch(error => this.$notif.warning(error.response.data.message))
     }
   },
   created() {
     window.addEventListener('orientationchange', this.orientationchangeListener);  // 绑定横竖屏切换事件
     if (document.documentElement.clientWidth < 500) {
       this.isVertical = true;
-    } else {
-      this.getRoom();
-      if (localStorage.getItem('token') != null) {
-        this.connectWebsocket();
-      }
+      return
     }
+    if (localStorage.getItem('token') != null) {
+      this.connectWebsocket();
+    }
+    this.getRoom();
   },
   mounted() {
     this.$refs.gameAudio.playNormalMusic();
