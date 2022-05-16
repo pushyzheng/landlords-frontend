@@ -54,7 +54,6 @@ export default {
   },
   methods: {
     playNormalMusic() {
-      console.log('playNormalMusic')
       this.normalAudio.play();
     },
     pauseNormalMusic() {

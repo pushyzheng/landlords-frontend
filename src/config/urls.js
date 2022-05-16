@@ -39,6 +39,11 @@ export default {
   chat: {
     send: domain + "/chat"
   },
+  achievement: {
+    getAchievementByUser: (id) => {
+      return domain + '/achievement/' + id
+    }
+  },
   ws: {
     connect(token) {
       return `ws://${host}/ws?token=${token}`

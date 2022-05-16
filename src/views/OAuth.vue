@@ -5,14 +5,14 @@
 </template>
 
 <script>
-  export default {
-    created () {
-      let token = this.$route.params.token;
-      localStorage.setItem('token', token)
-      location.href = '/#/'
-      location.reload();
-    }
+export default {
+  created() {
+    let token = this.$route.params.token;
+    localStorage.setItem('token', token)
+    location.href = '/#/'
+    location.reload();
   }
+}
 </script>
 
 <style scoped>

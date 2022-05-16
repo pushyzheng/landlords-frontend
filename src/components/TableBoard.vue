@@ -17,7 +17,8 @@
           <Countdown ref="countdown"/>
         </div>
         <div style="display: flex;justify-content: center">
-          <button type="button" class="btn btn-secondary" style="margin-right: 2rem;" @click="pass" v-show="showPassbtn">
+          <button type="button" class="btn btn-secondary" style="margin-right: 2rem;" @click="pass"
+                  v-show="showPassbtn">
             不出
           </button>
           <button type="button" class="btn btn-danger" @click="playCard">
@@ -100,13 +101,13 @@ export default {
      */
     distributeCard() {
       this.$http.get(this.$urls.player.myCards)
-          .then(response => {
-            this.cards = response.data.data;
-            this.$emit('distributeCard');
-            // 模拟发牌的动画，通过一个Interval函数来执行
-            this.dealInterval = setInterval(this.dealIntervalMethod, 220);
-          })
-          .catch(error => this.$notif.warning(error.response.data.message))
+        .then(response => {
+          this.cards = response.data.data;
+          this.$emit('distributeCard');
+          // 模拟发牌的动画，通过一个Interval函数来执行
+          this.dealInterval = setInterval(this.dealIntervalMethod, 220);
+        })
+        .catch(error => this.$notif.warning(error.response.data.message))
     },
     /**
      * 获取手中的牌
@@ -114,16 +115,15 @@ export default {
      */
     getMyCards() {
       this.$http.get(this.$urls.player.myCards)
-          .then(response => {
-            this.myCardList = response.data.data;
-          })
-          .catch(error => this.$notif.warning(error.response.data.message))
+        .then(response => {
+          this.myCardList = response.data.data;
+        })
+        .catch(error => this.$notif.warning(error.response.data.message))
     },
     dealIntervalMethod() {
       if (this.simulationIndex == this.cards.length) {  // 发牌结束
         clearInterval(this.dealInterval);
         this.simulationIndex = 0;
-        this.showBid()
       } else {
         this.myCardList.push(this.cards[this.simulationIndex]);
         this.simulationIndex++;
@@ -136,10 +136,13 @@ export default {
     bid(score) {
       let body = {want: score === 0 ? false : true, score: score}
       this.$http.post(this.$urls.game.bid, body)
-          .then(response => {
-            this.showBidBtn = false;
-          })
-          .catch(error => this.showBidBtn = false);
+        .then(response => {
+          this.showBidBtn = false;
+        })
+        .catch(error => {
+          console.log(error)
+          this.$notif.warning(error.response.data.message)
+        });
     },
     /**
      * 玩家点击牌处理逻辑
@@ -167,47 +170,47 @@ export default {
         }
       }
       this.$http.post(this.$urls.game.play, body)
-          .then(response => {
-            this.showPlayBtn = false;
-            this.selectCardList = [];
-            this.getMyCards();
-          })
-          .catch(error => this.$notif.warning(error.response.data.message));
+        .then(response => {
+          this.showPlayBtn = false;
+          this.selectCardList = [];
+          this.getMyCards();
+        })
+        .catch(error => this.$notif.warning(error.response.data.message));
     },
     pass() {
       this.$http.post(this.$urls.game.pass)
-          .then(response => {
-            console.log(response.data.data);
-            this.showPlayBtn = false;
-            this.selectCardList = [];
-          })
-          .catch(error => this.$notif.warning(error.response.data.message))
+        .then(response => {
+          console.log(response.data.data);
+          this.showPlayBtn = false;
+          this.selectCardList = [];
+        })
+        .catch(error => this.$notif.warning(error.response.data.message))
     },
     /**
      * 查询是否为当前玩家出牌回合
      */
     getPlayerRound() {
       this.$http.get(this.$urls.player.isPlayerRound)
-          .then(response => {
-            if (response.data.data) {
-              this.showPlay();
-            }
-          })
-          .catch(error => this.$notif.warning(error.response.data.message))
+        .then(response => {
+          if (response.data.data) {
+            this.showPlay();
+          }
+        })
+        .catch(error => this.$notif.warning(error.response.data.message))
     },
     getCanPass() {
       this.$http.get(this.$urls.player.canPass)
-          .then(response => {
-            this.showPassbtn = response.data.data
-          })
-          .catch(error => this.$notif.warning(error.response.data.message))
+        .then(response => {
+          this.showPassbtn = response.data.data
+        })
+        .catch(error => this.$notif.warning(error.response.data.message))
     },
     getCanBid() {
       this.$http.get(this.$urls.player.canBid)
-          .then(response => {
-            this.showBidBtn = response.data.data
-          })
-          .catch(error => this.$notif.warning(error.response.data.message))
+        .then(response => {
+          this.showBidBtn = response.data.data
+        })
+        .catch(error => this.$notif.warning(error.response.data.message))
     },
     sortNumber(a, b) {
       return a - b;

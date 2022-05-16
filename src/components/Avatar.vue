@@ -1,11 +1,16 @@
 <template>
-  <img :src="url" alt="user-avatar" class="round-avatar">
+  <img alt="user-avatar" class="round-avatar"
+       :src="url"
+       v-bind:style="{width: width}">
 </template>
 
 <script>
 export default {
   name: "Avatar",
-  props: ['url']
+  props: {
+    url: {},
+    width: {default: '60px'}
+  }
 }
 </script>
 

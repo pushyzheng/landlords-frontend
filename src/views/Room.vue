@@ -27,47 +27,16 @@
     <!--其他玩家用户信息-->
     <div id="other-player-user">
       <!--上家（左边玩家）-->
-      <div id="prev-player" v-if="prevPlayer != null">
-        <div style="margin-right: 20px;">
-          <div>
-            <Avatar :url="prevPlayer.user.avatar"/>
-          </div>
-          <span class="others-username">{{ prevPlayer.user.username }}</span><br>
-          <span class="others-money">
-            <img src="../assets/money-bag.png" class="money-icon">{{ prevPlayer.user.money }}
-          </span><br>
-          <span class="others-identity" v-show="prevPlayer.identityName != ' '">{{ prevPlayer.identityName }}</span>
-        </div>
-        <div v-if="gamePreparing">
-          <img src="../assets/ok-left.png" style="width: 70px;" v-if="prevPlayer.ready">
-        </div>
-        <div class="remaining-cards" v-else>{{ prevPlayer.cardSize }}</div>
-        <CardList :cards="prevPlayer.recentCards" id="prev-player-recentcards"/>
-        <Countdown style="margin-left: 30px;" v-if="countdown.prev" ref="countdownPrev"/>
-      </div>
-      <div v-else></div>
+      <Player :player="prevPlayer"
+              :gamePreparing="gamePreparing"
+              :show-count-down="countdown.prev"
+              ref="prevPlayer"/>
 
       <!--下家（右边玩家）-->
-      <div id="next-player" v-if="nextPlayer != null">
-        <Countdown style="margin-right: 30px;" v-if="countdown.next" ref="countdownNext"/>
-        <CardList :cards="nextPlayer.recentCards" id="next-player-recentcards"/>
-        <div v-if="gamePreparing">
-          <img src="../assets/ok-right.png" style="width: 70px;" v-if="nextPlayer.ready">
-        </div>
-        <div class="remaining-cards" v-else>{{ nextPlayer.cardSize }}</div>
-
-        <div style="margin-left: 20px;">
-          <div>
-            <Avatar :url="nextPlayer.user.avatar"/>
-          </div>
-          <span class="others-username">{{ nextPlayer.user.username }}</span><br>
-          <span class="others-money">
-            <img src="../assets/money-bag.png" class="money-icon"> {{ nextPlayer.user.money }}
-          </span><br>
-          <span class="others-identity" v-show="nextPlayer.identityName != ' '">{{ nextPlayer.identityName }}</span>
-        </div>
-      </div>
-      <div v-else></div>
+      <Player :player="nextPlayer"
+              :gamePreparing="gamePreparing"
+              :show-count-down="countdown.next"
+              ref="nextPlayer" direction="row-reverse"/>
     </div>
 
     <!--准备和退出房间操作按钮-->
@@ -102,7 +71,7 @@
     <!--当前玩家的信息和状态栏-->
     <div id="my-info">
       <div>
-        <Avatar :url="curUser.avatar"/>
+        <Avatar :url="getPlayerAvatar"/>
         <span id="curuser-username">{{ curUser.username }}</span>
         <span id="curuser-money">
           <img src="../assets/money-bag.png" class="money-icon" alt="money-bag">
@@ -163,10 +132,12 @@ import VerticleTip from "../components/VerticleTip";
 import TopCard from "../components/TopCard";
 import Toast from "../components/boostrap/Toast";
 import Countdown from "../components/Countdown";
+import Player from "../components/Player";
+import PlayerInfo from "../components/PlayerInfo";
 import chatConfig from '../config/chat'
 
 export default {
-  components: {Countdown, TopCard, VerticleTip, GameAudio, CardList, Avatar, TableBoard, Toast},
+  components: {Countdown, TopCard, VerticleTip, GameAudio, CardList, Avatar, TableBoard, Toast, Player, PlayerInfo},
   data() {
     return {
       defaultMessage: chatConfig.defaultMessage,
@@ -213,6 +184,9 @@ export default {
       if (this.roundResult == null) return;
       if (this.roundResult.winning == true) return '恭喜你！胜利了';
       else return '很抱歉！失败了！'
+    },
+    getPlayerAvatar() {
+      return this.$images.getPlayerAvatar(this.curPlayer)
     }
   },
   methods: {
@@ -253,15 +227,13 @@ export default {
      */
     refreshRoom() {
       if (this.$route.params.id == undefined) return;
-      this.$http.get(this.$urls.rooms.getRoomById(this.$route.params.id)).then(
-        response => {
+      this.$http.get(this.$urls.rooms.getRoomById(this.$route.params.id))
+        .then(response => {
           this.room = response.data.data;
           this.playerList = response.data.data.playerList;
           this.getPrevAndNextPlayer();
-        }
-      ).catch(
-        error => alert(error)
-      );
+        })
+        .catch(error => alert(error));
     },
     /**
      * 退出房间
@@ -334,15 +306,11 @@ export default {
       if (cur === nextPlayerId) {
         this.countdown.next = true;
         this.countdown.prev = false;
-        setTimeout(() => {
-          this.$refs.countdownNext.start(this.room.countdown)
-        }, 100)
+        this.$refs.nextPlayer.startCountdown(this.room.countdown)
       } else if (cur === prevPlayerId) {
         this.countdown.next = false
         this.countdown.prev = true;
-        setTimeout(() => {
-          this.$refs.countdownPrev.start(this.room.countdown)
-        }, 100)
+        this.$refs.prevPlayer.startCountdown(this.room.countdown)
       } else {
         this.countdown.prev = false;
         this.countdown.next = false;
@@ -371,7 +339,7 @@ export default {
       }
       // 叫牌消息处理
       else if (data.type === enums.wsType.bid) {
-        // this.$refs.tableBoard.showBid();
+        this.$refs.tableBoard.showBid();
       }
       // 叫牌结束
       else if (data.type === enums.wsType.bidEnd) {
@@ -550,24 +518,6 @@ export default {
   font-weight: bolder;
 }
 
-.others-username {
-  color: white;
-  font-weight: bolder;
-  font-size: 18px;
-}
-
-.others-money {
-  font-size: 15px;
-  color: white;
-  font-weight: bolder;
-}
-
-.others-identity {
-  font-size: 15px;
-  color: white;
-  font-weight: bolder;
-}
-
 #prev-player {
   display: flex;
   align-items: flex-end
@@ -584,17 +534,6 @@ export default {
 
 #next-player-recentcards {
   margin-right: 20px;
-}
-
-.remaining-cards {
-  background-image: url('../assets/card-back.png');
-  color: white;
-  font-weight: bolder;
-  font-size: 20px;
-  -webkit-background-size: cover;
-  background-size: cover;
-  border-radius: 10px;
-  padding: 15px 9px;
 }
 
 .money-icon {

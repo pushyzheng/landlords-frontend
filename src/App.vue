@@ -8,9 +8,7 @@
 export default {
   name: 'App',
   created() {
-    if (localStorage.getItem('token') == null) {
-      this.$router.push({name: 'Login'})
-    } else {
+    if (localStorage.getItem('token') != null) {
       this.getUserInfo();
     }
   },
