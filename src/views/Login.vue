@@ -10,10 +10,8 @@
     </button>
 
     <Modal header-img="/static/images/poker.png" ref="loginModal" @submit="submit">
-      <div class="alert alert-danger alert-dismissible fade show" role="alert" v-if="showAlert">
-        <strong>Hello {{ body.username }}!</strong> 你的用户名或者密码可能有误!
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
+      <alert ref="alert"/>
+
       <div class="form-floating mb-3">
         <input type="email" class="form-control" id="username-input" placeholder="用户名" v-model="body.username">
         <label>用户名</label>
@@ -23,16 +21,23 @@
         <label>密码</label>
       </div>
     </Modal>
+
+    <div id="system-setting-btn" @click="openSystemSettings">
+      系统设置
+    </div>
+
+    <system-settings ref="systemSettings"/>
   </div>
 </template>
 
 <script>
 import Modal from "../components/boostrap/Modal";
-import axios from "axios";
+import Alert from "../components/boostrap/Alert";
+import SystemSettings from "../components/SystemSettings";
 
 export default {
   name: "Login",
-  components: {Modal},
+  components: {Alert, SystemSettings, Modal},
   data() {
     return {
       loginViewStyleObj: {
@@ -41,14 +46,14 @@ export default {
       body: {
         username: '',
         password: ''
-      },
-      showAlert: false
+      }
     }
   },
   methods: {
     submit() {
-      if (this.body.username.length == 0 || this.body.password.length == 0) {
-        this.showAlert = true
+      if (this.$utils.isEmpty(this.body.username)
+        || this.$utils.isEmpty(this.body.password)) {
+        this.$refs.alert.warning('用户名密码不能为空!')
         this.$refs.loginModal.reset();
         return
       }
@@ -64,7 +69,7 @@ export default {
         )
         .catch(error => {
             console.warn('登录失败: ', error)
-            this.showAlert = true
+            this.$refs.alert.error('你的用户名或者密码可能有误!')
             this.$refs.loginModal.reset()
           }
         )
@@ -84,6 +89,9 @@ export default {
     },
     redirectQQLogin() {
       window.location.href = this.$urls.auth.qqLogin;
+    },
+    openSystemSettings() {
+      this.$refs.systemSettings.show();
     }
   }
 }
@@ -98,5 +106,13 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+#system-setting-btn {
+  color: white;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
 }
 </style>

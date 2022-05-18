@@ -1,5 +1,5 @@
 <template>
-  <div id="room-view" v-bind:style="roomViewStyleObj" v-if="!isVertical">
+  <div id="room-view" v-bind:style="roomViewStyleObj">
     <!--左下角消息通知-->
     <Toast id="chat-toast"
            :header="toast.header"
@@ -119,7 +119,6 @@
       </div>
     </mu-dialog>
   </div>
-  <VerticleTip v-else/>
 </template>
 
 <script>
@@ -145,7 +144,6 @@ export default {
         height: document.documentElement.clientHeight + 'px'
       },
       bgmSwtich: true,
-      isVertical: false,          // 手机端是否是竖屏显示
       userPreparing: false,
       gameEndDialog: false,
       showTopCards: false,
@@ -370,22 +368,22 @@ export default {
       }
     },
     connectWebsocket() {
-      let self = this;
       if ('WebSocket' in window) {
         this.websocket = new WebSocket(this.$urls.ws.connect(localStorage.getItem('token')));
       } else {
         this.$notif.error('你的浏览器不支持 WebSocket, 将影响游戏功能使用')
       }
       this.websocket.onmessage = this.onWsMessage;
-      this.websocket.onopen = function () {
-        console.log('WebSocket连接成功');
-        self.startWsTimeOut();
+      this.websocket.onopen = () => {
+        this.startWsTimeOut();
       }
-      this.websocket.onerror = function () {
-        console.error('WebSocket连接发生错误')
+      this.websocket.onerror = err => {
+        this.$notif.error('websocket 连接失败, 会影响游戏正常运行')
+        console.error('WebSocket connect error: ')
+        console.error(err)
       }
-      this.websocket.onclose = function () {
-        console.log('websocket断开连接了，尝试重连。。。');
+      this.websocket.onclose = () => {
+        console.warn('websocket 断开连接了')
       }
     },
     /**
@@ -403,9 +401,6 @@ export default {
     },
     distributeListener() {
       this.$refs.gameAudio.playDealAudio();  // 播放发牌音效
-    },
-    orientationchangeListener() {  // 处理横竖屏切换事件
-      location.reload();
     },
     continueGame() {  // 点击结算Dialog继续游戏触发的事件
       this.$refs.gameAudio.playNormalMusic();
@@ -453,11 +448,6 @@ export default {
     }
   },
   created() {
-    window.addEventListener('orientationchange', this.orientationchangeListener);  // 绑定横竖屏切换事件
-    if (document.documentElement.clientWidth < 500) {
-      this.isVertical = true;
-      return
-    }
     if (localStorage.getItem('token') != null) {
       this.connectWebsocket();
     }

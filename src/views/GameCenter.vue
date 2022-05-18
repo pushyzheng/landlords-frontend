@@ -1,27 +1,25 @@
 <template>
-  <div id="game-center-view" v-bind:style="gameCenterStyleObj" v-if="!isVerticle">
+  <div id="game-center-view" v-bind:style="gameCenterStyleObj">
     <!--欢迎音乐-->
     <audio loop="loop" :src="welcomeMusicUrl" autoplay="autoplay"/>
 
-    <a type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
-       aria-controls="offcanvasRight" style="color: white;font-weight: bolder;float: right">
+    <!--左侧个人信息-->
+    <Profile/>
+
+    <div id="game-center-title">
+      游戏大厅
+    </div>
+
+    <a type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="profile-btn"
+       aria-controls="offcanvasRight">
       个人信息
     </a>
 
-    <Profile/>
-
-    <mu-flex justify-content="center">
-      <h1 style="color: white">游戏大厅</h1>
-    </mu-flex>
-
     <!--没有房间显示的提示-->
     <div v-if="roomList.length == 0" id="no-room">
-      <mu-flex justify-content="center">
-        <!--<img src="../assets/202381.svg" id="no-room-img">-->
-      </mu-flex>
-      <mu-flex justify-content="center" id="no-room-text">
+      <div id="no-room-text">
         没有找到房间 <br> 点击下方的 + 按钮可以创建房间 <br> 并邀请好友一起游戏！
-      </mu-flex>
+      </div>
     </div>
 
     <!--房间列表-->
@@ -34,7 +32,7 @@
            ref="createRoomModal"
            header-img="/static/images/create-team.png">
       <div>
-        <Alert :text="createRoomModalAlert" v-if="showCreateRoomModalAlert"/>
+        <alert-new ref="createRoomAlert"/>
         <form>
           <div class="form-floating mb-3">
             <input type="email" class="form-control" id="username-input" placeholder="房间名" v-model="title">
@@ -48,11 +46,6 @@
       </div>
     </Modal>
 
-    <br>
-    <mu-flex justify-content="center">
-      <!--<mu-button @click="backToRoom" v-show="showBackToRoom" color="primary" large round>返回房间</mu-button>-->
-    </mu-flex>
-
     <!--创建房间按钮-->
     <button type="button" class="btn btn-primary btn-lg"
             id="create-button" @click="showCreateRoomModal">
@@ -60,12 +53,11 @@
     </button>
 
     <!--刷新按钮-->
-    <mu-button @click="getRoomList" color="primary" fab id="refresh-buttom">
-      <mu-icon value="refresh"></mu-icon>
-    </mu-button>
+    <!--    <button type="button" class="btn btn-primary btn-lg"-->
+    <!--            id="refresh-button" @click="getRoomList">-->
+    <!--    </button>-->
 
   </div>
-  <VerticleTip v-else/>
 </template>
 
 <script>
@@ -74,11 +66,11 @@ import musicUrls from '../config/music'
 import RoomItem from "../components/RoomItem";
 import VerticleTip from "../components/VerticleTip";
 import Modal from "../components/boostrap/Modal";
-import Alert from "../components/boostrap/Alert";
+import AlertNew from "../components/boostrap/Alert";
 import Profile from "../components/Profile";
 
 export default {
-  components: {VerticleTip, RoomItem, Modal, Alert, Profile},
+  components: {AlertNew, VerticleTip, RoomItem, Modal, Profile},
   data() {
     return {
       gameCenterStyleObj: {
@@ -87,9 +79,6 @@ export default {
       roomListStyleObj: {
         minHeight: document.documentElement.clientHeight / 1.5 + 'px'
       },
-      isVerticle: false,
-      createRoomModalAlert: '',
-      showCreateRoomModalAlert: false,
       title: null,
       password: null,
       welcomeMusicUrl: musicUrls.welcome,
@@ -102,15 +91,10 @@ export default {
     }
   },
   created() {
-    window.addEventListener('orientationchange', this.orientationchangeListener);  // 绑定横竖屏切换事件
-    if (document.documentElement.clientWidth < 500) {
-      this.isVerticle = true;
+    if (localStorage.getItem('token') == null) {
+      this.$router.push({name: 'Login'})
     } else {
-      if (localStorage.getItem('token') == null) {
-        this.$router.push({name: 'Login'})
-      } else {
-        this.getRoomList();
-      }
+      this.getRoomList();
     }
   },
   mounted() {
@@ -134,35 +118,26 @@ export default {
       )
     },
     createRoom() {
-      let body = {
-        password: this.password,
-        title: this.title
-      };
-      this.$http.post(this.$urls.rooms.create, body).then(
-        response => {
+      let body = {password: this.password, title: this.title};
+      this.$http.post(this.$urls.rooms.create, body)
+        .then(response => {
           let roomId = response.data.data.id;
           // this.$router.push({name: 'Room', params: {id: roomId}})
           location.href = '/#/rooms/' + roomId
           location.reload();
           localStorage.setItem('CURRENT_ROOM_ID', roomId);
-        }
-      ).catch(
-        error => {
+        })
+        .catch(error => {
           this.$refs.createRoomModal.reset();
-          this.createRoomModalAlert = error.response.data.message
-          this.showCreateRoomModalAlert = true
+          this.$refs.createRoomAlert.error(error.response.data.message)
           console.warn(error.response.data.message)
-        }
-      )
+        })
     },
     showCreateRoomModal() {
       this.$refs.createRoomModal.toggle()
     },
     backToRoom() {
       this.$router.push({name: 'Room', params: {id: localStorage.getItem('CURRENT_ROOM_ID')}})
-    },
-    orientationchangeListener() {  // 处理横竖屏切换事件
-      location.reload();
     }
   }
 }
@@ -174,6 +149,15 @@ export default {
   padding: 10px;
   background-image: url("../assets/game-center-bg.jpg");
   background-size: cover;
+}
+
+#game-center-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bolder;
+  color: white;
+  font-size: 2rem;
 }
 
 #room-list {
@@ -188,24 +172,28 @@ export default {
   right: 10px;
 }
 
-#refresh-buttom {
+#refresh-button {
   position: absolute;
   bottom: 10px;
   left: 10px;
+}
+
+#profile-btn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  color: white;
+  font-weight: bolder;
 }
 
 #no-room {
   margin-top: 10px
 }
 
-#no-room-img {
-  width: 300px;
-}
-
 #no-room-text {
   font-weight: bolder;
-  font-size: 22px;
-  margin-top: 20px;
+  font-size: 1.5rem;
+  margin-top: 8rem;
   text-align: center;
   line-height: 2;
   color: #ffffff;
@@ -214,13 +202,9 @@ export default {
 /* 手机端样式适应 */
 @media screen and (max-width: 840px) {
 
-  #no-room-img {
-    width: 150px;
-  }
-
   #no-room-text {
-    font-size: 15px;
-    margin-top: 10px;
+    font-size: 1.2rem;
+    margin-top: 4rem;
   }
 }
 </style>

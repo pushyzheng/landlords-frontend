@@ -1,9 +1,16 @@
-// let host = "api.landlords.pushyzheng.com";
-let host = "localhost:8080";
+import utils from "./utils";
+
+let host = "api.landlords.pushyzheng.com";
+// let host = "localhost:8080";
+// let host = "192.168.0.110:8080";
 
 let domain = 'http://' + host;
 
 export default {
+  getDomain() {
+    let storage = localStorage.getItem('serverDomain');
+    return utils.isEmpty(storage) ? domain : storage;
+  },
   auth: {
     login: domain + '/login',
     qqLogin: domain + '/qqLogin'

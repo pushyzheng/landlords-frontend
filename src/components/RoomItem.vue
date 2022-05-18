@@ -6,7 +6,7 @@
            id="enterRoomModal"
            @submit="submitEnter">
       <div>
-        <Alert :text="errorMessage" type="warning" v-if="showAlert"/>
+        <alert ref="enterRoomAlert"/>
         <input class="form-control form-control-lg" type="text"
                v-model="password"
                placeholder="该房间已加锁, 请输入密码"
@@ -56,8 +56,6 @@ export default {
   components: {Modal, Alert},
   data() {
     return {
-      showAlert: false,
-      errorMessage: '',
       password: null
     }
   },
@@ -93,16 +91,14 @@ export default {
         }
       ).catch(
         error => {
-          this.showAlert = true
+          this.$refs.enterRoomAlert.error(error.response.data.message)
           this.$refs.enterRoomModal.reset()
-          this.errorMessage = error.response.data.message;
         }
       );
     },
     submitEnter() {
-      if (this.password == null || this.password.length === 0) {
-        this.showAlert = true
-        this.errorMessage = '密码不能为空'
+      if (this.$utils.isEmpty(this.password)) {
+        this.$refs.enterRoomAlert.warning('密码不能为空')
         this.$refs.enterRoomModal.reset()
       } else {
         this.requestEnter();

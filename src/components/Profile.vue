@@ -87,7 +87,7 @@ export default {
 <style scoped>
 #profile-avatar {
   border-radius: 75px;
-  width: 150px;
+  width: 4rem
 }
 
 #submit-btn {

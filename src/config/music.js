@@ -60,7 +60,12 @@ export default {
     '8': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_8.mp3',
     '9': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_9.mp3',
     '10': 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_Chat_10.mp3',
-    '11': 'static/audio/102840711-1-208 00_01_27.90-00_01_30.90.mp3',
+    '11': 'static/audio/lbw_cappuccino.mp3',
     '12': 'static/audio/lbw_boom.mp3',
+    '13': 'static/audio/lbw_17.mp3',
+    '14': 'static/audio/lbw_ayi_ni_kuai_dian.mp3',
+    '15': 'static/audio/lbw_deng_deng_deng.mp3',
+    '16': 'static/audio/lbw_gaiya.mp3',
+    '17': 'static/audio/lbw_man_man_lai.mp3'
   }
 }

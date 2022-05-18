@@ -1,7 +1,9 @@
 <template>
-  <div>
+  <div v-if="show">
     <div class="alert alert-dismissible fade show" role="alert"
-         v-bind:class="{ 'alert-warning': isWarning,'alert-danger': isDanger }">
+         v-bind:class="{ 'alert-warning': isWarning,
+         'alert-danger': isDanger,
+         'alert-success': isSuccess}">
       {{ text }}
 
       <button type="button"
@@ -18,31 +20,37 @@ export default {
   name: "Alert",
   data() {
     return {
-      isWarning: true,
-      isDanger: false
-    }
-  },
-  props: {
-    text: {
-      default: 'You should check in on some of those fields below'
-    },
-    type: {
-      default: 'warning'
-    }
-  },
-  created() {
-    if (this.type == 'warning') {
-      this.isDanger = false;
-      this.isWarning = true;
-    } else if (this.type == 'danger') {
-      this.isDanger = true;
-      this.isWarning = false;
-    } else {
-      console.error("The type is illegal: " + this.type)
+      show: false,
+      isWarning: false,
+      isDanger: false,
+      isSuccess: false,
+      text: null
     }
   },
   methods: {
+    success(msg) {
+      this.setDefault()
+      this.isSuccess = true
+      this.text = msg
+    },
+    warning(msg) {
+      this.setDefault()
+      this.isWarning = true
+      this.text = msg
+    },
+    error(msg) {
+      this.setDefault()
+      this.isDanger = true
+      this.text = msg
+    },
+    setDefault() {
+      this.show = true
+      this.isWarning = false
+      this.isDanger = false
+      this.isSuccess = false
+    },
     clickClose() {
+      this.show = false
       this.$emit('close');
     }
   }

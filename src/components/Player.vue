@@ -1,6 +1,6 @@
 <template>
   <div class="player-component">
-    <popover name="myname" event="hover" widht="15rem">
+    <popover :name="isLeft ? 'popover-left': 'popover-right'" event="hover" widht="15rem">
       <PlayerInfo :player="player"/>
     </popover>
 
@@ -9,10 +9,10 @@
       <div class="player-info">
         <div v-bind:class="{'rorate-180': needsRotate180}">
           <div v-if="isLeft">
-            <Avatar :url="getAvatar" :width="playerAvatarWidth" v-popover:myname.right/>
+            <Avatar :url="getAvatar" :width="playerAvatarWidth" v-popover:popover-left.right/>
           </div>
           <div v-else>
-            <Avatar :url="getAvatar" :width="playerAvatarWidth" v-popover:myname.left/>
+            <Avatar :url="getAvatar" :width="playerAvatarWidth" v-popover:popover-right.left/>
           </div>
         </div>
         <div class="player-username">{{ player.user.username }}</div>

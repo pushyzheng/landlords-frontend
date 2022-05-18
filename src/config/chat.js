@@ -11,6 +11,11 @@ export default {
     // {type: '9', content: '交个朋友把 能告诉我咋联系了吗'},
     {type: '10', content: '再见啦, 俺会想念大家的'},
     {type: '11', content: '[卢本伟] 给阿姨倒一杯卡布奇诺'},
-    {type: '12', content: '[卢本伟] 炸他! 炸他!'}
+    {type: '12', content: '[卢本伟] 炸他! 炸他!'},
+    {type: '13', content: '[卢本伟] 你 17 张牌能秒我?'},
+    {type: '14', content: '[卢本伟] 阿姨快点呀, 阿姨'},
+    {type: '15', content: '[卢本伟] 登 登 登 登 登'},
+    {type: '16', content: '[卢本伟] 盖亚!!!'},
+    {type: '17', content: '[卢本伟] 慢慢来, 慢慢等'},
   ]
 }

@@ -1,14 +1,15 @@
 <template>
   <div>
-    <div class="modal fade" :id="id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
+    <div class="modal fade"
+         :id="id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" v-bind:class="{'modal-fullscreen':this.$utils.isPhone()}">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalLabel" v-if="!showImage">
               {{ title }}
             </h5>
             <div v-else>
-              <img :src="headerImg" style="width: 200px;">
+              <img :src="headerImg" style="width: 5rem;" alt="header-image">
             </div>
           </div>
           <div class="modal-body">
@@ -23,7 +24,8 @@
                     @click="submit"
                     v-bind:class="{ 'btn-primary': submitBtn.isPrimary,'btn-success': submitBtn.isSuccess,
                     disabled: submitBtn.isDisabled }">
-              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" v-if="submitBtn.isDisabled"></span>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                    v-if="submitBtn.isDisabled"></span>
               {{ submitBtn.text }}
             </button>
           </div>

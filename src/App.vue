@@ -1,13 +1,26 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view v-if="isLandscape"/>
+    <verticle-tip v-else/>
   </div>
 </template>
 
 <script>
+import VerticleTip from "./components/VerticleTip";
+
 export default {
   name: 'App',
+  components: {VerticleTip},
+  data() {
+    return {
+      isLandscape: true
+    }
+  },
   created() {
+    let mql = this.$utils.matchMediaLandscape()
+    mql.onchange = this.onOrientationChanged
+    this.isLandscape = mql.matches
+
     if (localStorage.getItem('token') != null) {
       this.getUserInfo();
     }
@@ -24,6 +37,10 @@ export default {
           }
           console.log(error.response)
         })
+    },
+    onOrientationChanged(evt) {
+      console.log(`onOrientationChanged: ${evt.matches}`)
+      this.isLandscape = evt.matches
     }
   }
 }

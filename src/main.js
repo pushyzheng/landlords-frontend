@@ -11,10 +11,12 @@ import VueToast from 'vue-toast-notification';
 //import 'vue-toast-notification/dist/theme-default.css';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import Popover from 'vue-js-popover'
+import VueFullscreen from 'vue-fullscreen'
 
 Vue.use(MuseUI);
 Vue.use(VueToast);
 Vue.use(Popover)
+Vue.use(VueFullscreen)
 
 Vue.config.productionTip = false
 Vue.use(global)
