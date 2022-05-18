@@ -223,7 +223,7 @@ div[class*='suit']:after {
 
 
 /* 手机端样式适应 */
-@media screen and (max-width:840px) {
+@media screen and (max-width:900px) {
 
   /*牌数字的大小*/
   .card p {

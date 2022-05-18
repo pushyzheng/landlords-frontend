@@ -225,7 +225,7 @@ div[class*='suit']:after {
 
 
 /* 手机端样式适应 */
-@media screen and (max-width:840px) {
+@media screen and (max-width:900px) {
 
   /*牌数字的大小*/
   .card p {
@@ -280,7 +280,7 @@ div[class*='suit']:after {
 
   /* 扑克牌层叠的大小 */
   .overlapping {
-    margin-left: -43px;
+    margin-left: -2rem;
   }
 
   /*被选择*/
@@ -288,7 +288,6 @@ div[class*='suit']:after {
     position: relative;
     bottom: 15px;
   }
-
 }
 
 @media screen and (min-width:1024px) {

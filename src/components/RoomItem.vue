@@ -129,9 +129,9 @@ export default {
   color: #ffffff;
 }
 
-@media screen and (max-width: 840px) {
+@media screen and (max-width: 900px) {
   .room-item {
-    padding: 0;
+    padding: 10;
   }
 }
 

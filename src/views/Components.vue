@@ -1,63 +1,80 @@
 <template>
-  <div id="components">
+  <div id="components" class="container">
+    <fullscreen v-model="fullscreen">
+      <h2 style="color: white">全屏</h2>
+    </fullscreen>
+
     <button type="button" @click="toggleFullscreen" class="btn btn-primary">Fullscreen</button>
     <!-- Api  -->
     <button type="button" @click="toggleApi" class="btn btn-primary">FullscreenApi</button>
     <!-- Directive  -->
     <button type="button" v-fullscreen class="btn btn-primary">FullscreenDirective</button>
 
-    <fullscreen v-model="fullscreen">
+    <div>
       <div>
-        <div>
-          <h1>alert</h1>
-          <button class="btn btn-primary" @click="$refs.alertNew.success('success')">alert success</button>
-          <button class="btn btn-primary" @click="$refs.alertNew.warning('warnning')">alert warnning</button>
-          <button class="btn btn-primary" @click="$refs.alertNew.error('error')">alert error</button>
-          <alert-new default-type="success" ref="alertNew"></alert-new>
-        </div>
-
-        <div>
-          <h1>modal</h1>
-          <button class="btn btn-primary" @click="toggle">
-            show modal
-          </button>
-        </div>
-
-        <div>
-          <h1>Toast</h1>
-          <button class="btn btn-primary" @click="showToast">
-            show toast
-          </button>
-        </div>
-
-        <div>
-          <h1>countdown</h1>
-          <button class="btn btn-primary" @click="startCountdown">
-            start coutdown
-          </button>
-
-          <div style="background: black">
-            <Countdown ref="countdown"/>
-          </div>
-        </div>
-
-        <Modal title="NewMessage" @submit="submit" ref="modal" id="exampleModal"
-               header-img="/static/images/lock.png">
-          <form>
-            <div class="mb-3">
-              <label for="recipient-name" class="col-form-label">Recipient:</label>
-              <input type="text" class="form-control" id="recipient-name">
-            </div>
-            <div class="mb-3">
-              <label for="message-text" class="col-form-label">Message:</label>
-              <textarea class="form-control" id="message-text"></textarea>
-            </div>
-          </form>
-        </Modal>
-
-        <Toast id="test-toast" ref="testToast"/>
+        <h1>alert</h1>
+        <button class="btn btn-primary" @click="$refs.alertNew.success('success')">alert success</button>
+        <button class="btn btn-primary" @click="$refs.alertNew.warning('warnning')">alert warnning</button>
+        <button class="btn btn-primary" @click="$refs.alertNew.error('error')">alert error</button>
+        <alert-new default-type="success" ref="alertNew"></alert-new>
       </div>
-    </fullscreen>
+
+      <div>
+        <h1>modal</h1>
+        <button class="btn btn-primary" @click="toggle">
+          show modal
+        </button>
+      </div>
+
+      <div>
+        <h1>Toast</h1>
+        <button class="btn btn-primary" @click="showToast">
+          show toast
+        </button>
+      </div>
+
+      <div>
+        <h1>countdown</h1>
+        <button class="btn btn-primary" @click="startCountdown">
+          start coutdown
+        </button>
+
+        <div style="background: black">
+          <Countdown ref="countdown"/>
+        </div>
+      </div>
+
+      <div>
+        <h1>Card</h1>
+        <div style="display: flex">
+          <card :data="{numberValue: 1, type:'SPADE'}"/>
+          <card :data="{numberValue: 1, type:'CLUB'}"/>
+          <card :data="{numberValue: 1, type:'HEART'}"/>
+          <card :data="{numberValue: 1, type:'DIAMOND'}"/>
+        </div>
+      </div>
+
+      <div>
+        <h1>CardList</h1>
+        <card-list :data="cards"/>
+      </div>
+
+      <Modal title="NewMessage" @submit="submit" ref="modal" id="exampleModal"
+             header-img="/static/images/lock.png">
+        <form>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Recipient:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">Message:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>
+      </Modal>
+
+      <Toast id="test-toast" ref="testToast"/>
+    </div>
   </div>
 </template>
 
@@ -66,15 +83,29 @@ import Modal from "../components/boostrap/Modal";
 import AlertNew from "../components/boostrap/Alert";
 import Toast from "../components/boostrap/Toast";
 import Countdown from "../components/Countdown";
+import Card from "../components/card/Card";
+import CardList from "../components/card/CardList";
 
 export default {
-  components: {AlertNew, Modal, Toast, Countdown},
+  components: {CardList, AlertNew, Modal, Toast, Countdown, Card},
   name: "Components",
   data() {
     return {
       showLoading: false,
-      fullscreen: false
+      fullscreen: false,
+      card: {
+        numberValue: 1,
+        type: 'CLUB'
+      },
+      cards: []
     }
+  },
+  created() {
+    let mockCards = []
+    for (let i = 0; i < 13; i++) {
+      mockCards.push({numberValue: i + 1, type: 'CLUB'})
+    }
+    this.cards = mockCards
   },
   methods: {
     toggle() {
@@ -112,5 +143,7 @@ export default {
 </script>
 
 <style scoped>
-
+#components {
+  margin-bottom: 10rem;
+}
 </style>

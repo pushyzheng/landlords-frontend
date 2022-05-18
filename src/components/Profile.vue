@@ -52,12 +52,12 @@ export default {
   },
   created() {
     this.$http.get(this.$urls.users.myself)
-        .then(response => {
-          this.profile = response.data.data
-          if (this.profile.avatar == null || this.profile.avatar.length == 0) {
-            this.profile.avatar = 'static/images/default-avatar.png'
-          }
-        });
+      .then(response => {
+        this.profile = response.data.data
+        if (this.profile.avatar == null || this.profile.avatar.length == 0) {
+          this.profile.avatar = 'static/images/default-avatar.png'
+        }
+      });
   },
   mounted() {
 
@@ -65,13 +65,13 @@ export default {
   methods: {
     submitUpdate() {
       this.$http.put(this.$urls.users.update, this.profile)
-          .then(response => {
-            this.$notif.success('更新成功')
-            console.log(response.data)
-          })
-          .catch(error => {
-            this.$notif.error('更新失败')
-          })
+        .then(response => {
+          this.$notif.success('更新成功')
+          console.log(response.data)
+        })
+        .catch(error => {
+          this.$notif.error('更新失败')
+        })
     },
     logout() {
       if (confirm('确定要退出登录吗?')) {
@@ -87,10 +87,17 @@ export default {
 <style scoped>
 #profile-avatar {
   border-radius: 75px;
-  width: 4rem
+  width: 10rem
 }
 
 #submit-btn {
   margin-top: 30px;
+}
+
+@media screen and (max-width: 900px) {
+
+  #profile-avatar {
+    width: 4rem
+  }
 }
 </style>

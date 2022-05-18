@@ -36,7 +36,7 @@
     <div class="remaining-cards"
          v-if="canShowRemainingCards"
          v-bind:style="{'flex-direction': direction}">
-      <img src="static/images/pokerback.jpeg" alt="" style="width: 30px;" class="remaining-cards-item">
+      <img src="static/images/pokerback.jpeg" alt="" class="remaining-cards-item">
       <img src="static/images/pokerback.jpeg" alt=""
            class="remaining-cards-item remaining-cards-overlapping"
            v-for="unused in player.cardSize">
@@ -74,9 +74,18 @@ export default {
     gamePreparing: {}
   },
   data() {
-    return {playerAvatarWidth: '100px'}
+    return {}
   },
   computed: {
+    playStateClass() {
+      return {
+        'player-state-left': this.direction == DIRECTION_ROW,
+        'player-state-right': this.direction == DIRECTION_ROW_REVERSE
+      }
+    },
+    playerAvatarWidth() {
+      return this.$utils.isPhone() ? "3rem" : "6rem"
+    },
     isLeft() {
       return this.direction == DIRECTION_ROW
     },
@@ -98,12 +107,6 @@ export default {
       } else {
         return this.direction == DIRECTION_ROW_REVERSE
       }
-    },
-    playStateClass() {
-      return {
-        'player-state-left': this.direction == DIRECTION_ROW,
-        'player-state-right': this.direction == DIRECTION_ROW_REVERSE
-      }
     }
   },
   methods: {
@@ -116,7 +119,6 @@ export default {
 
 <style scoped>
 .player-component {
-
 }
 
 .player-username {
@@ -161,5 +163,28 @@ export default {
 
 .rorate-180 {
   transform: rotateY(180deg)
+}
+
+@media screen and (max-width: 900px) {
+
+  #bottom-bar-chat {
+    display: none;
+  }
+
+  .player-username {
+    font-size: 1rem;
+  }
+
+  .remaining-cards-size {
+    font-size: 1rem;
+  }
+
+  .remaining-cards-item {
+    width: 1.2rem
+  }
+
+  .remaining-cards-overlapping {
+    margin-left: -0.8rem
+  }
 }
 </style>

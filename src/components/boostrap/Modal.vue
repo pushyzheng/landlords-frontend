@@ -4,16 +4,18 @@
          :id="id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" v-bind:class="{'modal-fullscreen':this.$utils.isPhone()}">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel" v-if="!showImage">
-              {{ title }}
-            </h5>
-            <div v-else>
-              <img :src="headerImg" style="width: 5rem;" alt="header-image">
+          <div class="modal-main">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel" v-if="!showImage">
+                {{ title }}
+              </h5>
+              <div v-else>
+                <img :src="headerImg" alt="header-image" class="modal-header-image">
+              </div>
             </div>
-          </div>
-          <div class="modal-body">
-            <slot></slot>
+            <div class="modal-body">
+              <slot></slot>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-lg"
@@ -101,7 +103,34 @@ export default {
 </script>
 
 <style scoped>
+
 .modal-header {
   justify-content: center !important;
+}
+
+.modal-header-image {
+  width: 13rem;
+}
+
+@media screen and (max-width: 900px) {
+
+  .modal-main {
+    display: flex;
+  }
+
+  .modal-body {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .modal-header-image {
+    width: 12rem;
+    margin-left: 2rem;
+  }
+
+  .modal-header {
+    border-bottom: 0px !important;
+  }
 }
 </style>

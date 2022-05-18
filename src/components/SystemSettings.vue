@@ -1,6 +1,8 @@
 <template>
   <div id="system-settings-component">
-    <Modal ref="settingModal" id="settings-modal" title="系统设置" @submit="submit">
+    <Modal ref="settingModal" id="settings-modal" title="系统设置"
+           header-img="/static/images/settings.png"
+           @submit="submit">
       <div>
         <alert ref="alert"/>
         <div class="form-floating mb-3">

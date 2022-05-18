@@ -1,15 +1,19 @@
 <template>
-  <div id="login-view" v-bind:style="loginViewStyleObj">
-    <img src="../assets/qq-connect.png"
-         style="border-radius: 50px;"
-         @click="redirectQQLogin"
-         alt="qq">
+  <div id="login-view">
+    <div id="login-btn-group">
+      <image-button width="200" url="static/images/login-btn-blue.png" id="qq-login-btn"
+                    @click="redirectQQLogin">
+        QQ 登录
+      </image-button>
 
-    <button type="button" class="btn btn-primary" @click="showLoginModal">
-      账号密码登录
-    </button>
+      <image-button width="200" url="static/images/login-btn-yellow.png"
+                    @click="showLoginModal">
+        <span style="color: dimgray">账号登录</span>
+      </image-button>
+    </div>
 
-    <Modal header-img="/static/images/poker.png" ref="loginModal" @submit="submit">
+    <!-- 账号密码登录 Modal -->
+    <Modal header-img="/static/images/login-modal-header.png" ref="loginModal" @submit="submit">
       <alert ref="alert"/>
 
       <div class="form-floating mb-3">
@@ -22,10 +26,10 @@
       </div>
     </Modal>
 
+    <!-- 系统设置按钮及组件 -->
     <div id="system-setting-btn" @click="openSystemSettings">
       系统设置
     </div>
-
     <system-settings ref="systemSettings"/>
   </div>
 </template>
@@ -34,15 +38,13 @@
 import Modal from "../components/boostrap/Modal";
 import Alert from "../components/boostrap/Alert";
 import SystemSettings from "../components/SystemSettings";
+import ImageButton from "../components/ImageButton";
 
 export default {
   name: "Login",
-  components: {Alert, SystemSettings, Modal},
+  components: {Alert, SystemSettings, Modal, ImageButton},
   data() {
     return {
-      loginViewStyleObj: {
-        height: document.documentElement.clientHeight + "px"
-      },
       body: {
         username: '',
         password: ''
@@ -100,12 +102,21 @@ export default {
 <style scoped>
 
 #login-view {
-  background-image: url("../assets/game-center-bg-night.jpg");
+  background-image: url("../assets/welcome-screen.jpg");
   background-size: cover;
+  height: 100vh;
+}
 
+#login-btn-group {
+  height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
+  padding-bottom: 20vh;
+}
+
+#qq-login-btn {
+  margin-right: 1rem;
 }
 
 #system-setting-btn {

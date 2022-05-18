@@ -1,5 +1,5 @@
 <template>
-  <div id="game-center-view" v-bind:style="gameCenterStyleObj">
+  <div id="game-center-view">
     <!--欢迎音乐-->
     <audio loop="loop" :src="welcomeMusicUrl" autoplay="autoplay"/>
 
@@ -23,7 +23,7 @@
     </div>
 
     <!--房间列表-->
-    <mu-list id="room-list" v-else v-bind:style="roomListStyleObj">
+    <mu-list id="room-list" v-else>
       <RoomItem v-for="room in roomList" :room="room"/>
     </mu-list>
 
@@ -73,9 +73,6 @@ export default {
   components: {AlertNew, VerticleTip, RoomItem, Modal, Profile},
   data() {
     return {
-      gameCenterStyleObj: {
-        height: document.documentElement.clientHeight + 'px'
-      },
       roomListStyleObj: {
         minHeight: document.documentElement.clientHeight / 1.5 + 'px'
       },
@@ -149,6 +146,7 @@ export default {
   padding: 10px;
   background-image: url("../assets/game-center-bg.jpg");
   background-size: cover;
+  height: 100vh;
 }
 
 #game-center-title {
@@ -158,12 +156,15 @@ export default {
   font-weight: bolder;
   color: white;
   font-size: 2rem;
+  margin-bottom: 2rem;
 }
 
 #room-list {
   background-color: rgba(0, 0, 0, .54);
   border-radius: 30px;
-  min-height: 500px;
+  min-height: 70vh;
+  width: 85vw;
+  margin: 0 auto;
 }
 
 #create-button {
@@ -200,11 +201,19 @@ export default {
 }
 
 /* 手机端样式适应 */
-@media screen and (max-width: 840px) {
+@media screen and (max-width: 900px) {
 
   #no-room-text {
     font-size: 1.2rem;
     margin-top: 4rem;
+  }
+
+  #game-center-title {
+    margin-bottom: 0.5rem;
+  }
+
+  #room-list {
+    min-height: 70vh;
   }
 }
 </style>
