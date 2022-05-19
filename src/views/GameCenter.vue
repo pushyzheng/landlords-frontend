@@ -10,10 +10,9 @@
       游戏大厅
     </div>
 
-    <a type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" id="profile-btn"
-       aria-controls="offcanvasRight">
-      个人信息
-    </a>
+    <image-button class="position-absolute top-0 end-0" width="70" style="padding: 1rem"
+                  data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
+                  :url="avatarUrl"/>
 
     <!--没有房间显示的提示-->
     <div v-if="roomList.length == 0" id="no-room">
@@ -47,16 +46,8 @@
     </Modal>
 
     <!--创建房间按钮-->
-    <button type="button" class="btn btn-primary btn-lg"
-            id="create-button" @click="showCreateRoomModal">
-      +
-    </button>
-
-    <!--刷新按钮-->
-    <!--    <button type="button" class="btn btn-primary btn-lg"-->
-    <!--            id="refresh-button" @click="getRoomList">-->
-    <!--    </button>-->
-
+    <image-button url="/static/images/create.png" width="70" id="create-button"
+                  @click="showCreateRoomModal"/>
   </div>
 </template>
 
@@ -68,9 +59,10 @@ import VerticleTip from "../components/VerticleTip";
 import Modal from "../components/boostrap/Modal";
 import AlertNew from "../components/boostrap/Alert";
 import Profile from "../components/Profile";
+import ImageButton from "../components/ImageButton";
 
 export default {
-  components: {AlertNew, VerticleTip, RoomItem, Modal, Profile},
+  components: {ImageButton, AlertNew, VerticleTip, RoomItem, Modal, Profile},
   data() {
     return {
       roomListStyleObj: {
@@ -83,8 +75,8 @@ export default {
     }
   },
   computed: {
-    showBackToRoom() {
-      return localStorage.getItem('CURRENT_ROOM_ID') != null ? true : false;
+    avatarUrl() {
+      return this.$images.getUserAvatar(this.$store.state.curUser)
     }
   },
   created() {
@@ -132,9 +124,6 @@ export default {
     },
     showCreateRoomModal() {
       this.$refs.createRoomModal.toggle()
-    },
-    backToRoom() {
-      this.$router.push({name: 'Room', params: {id: localStorage.getItem('CURRENT_ROOM_ID')}})
     }
   }
 }

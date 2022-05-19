@@ -27,9 +27,8 @@
     </Modal>
 
     <!-- 系统设置按钮及组件 -->
-    <div id="system-setting-btn" @click="openSystemSettings">
-      系统设置
-    </div>
+    <image-button url="/static/images/settings.png" width="30" id="system-setting-btn"
+                  @click="openSystemSettings"/>
     <system-settings ref="systemSettings"/>
   </div>
 </template>
@@ -102,7 +101,8 @@ export default {
 <style scoped>
 
 #login-view {
-  background-image: url("../assets/welcome-screen.jpg");
+  /*background-image: url("../assets/welcome-screen.jpg");*/
+  background-image: url("https://static.pushyzheng.com/0ee16ae326542d7998579db7f6b70cdd.jpg");
   background-size: cover;
   height: 100vh;
 }
@@ -120,7 +120,8 @@ export default {
 }
 
 #system-setting-btn {
-  color: white;
+  color: dimgray;
+  font-weight: bolder;
   position: fixed;
   top: 10px;
   right: 10px;

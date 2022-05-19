@@ -1,12 +1,6 @@
 <template>
   <div id="game-audio">
     <!--欢乐斗地主经典准备音乐-->
-    <!--https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/MusicEx/MusicEx_Welcome.mp3-->
-
-    <!--游戏中和准备时的音乐-->
-    <!--    <audio id="normal-music">-->
-    <!--      <source src="https://static.pushy.site/game/music/room-normal-4.mp3" type="audio/mp3"/>-->
-    <!--    </audio>-->
     <audio id="normal-music" loop="loop"
            src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/MusicEx/MusicEx_Welcome.mp3"/>
 

@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div class="position-absolute start-50 translate-middle-x"
+       v-bind:class="{'top-0': isPhone, 'bottom-0': !isPhone}">
+    <div>
       <div :id="id" class="toast" role="alert" aria-atomic="true">
         <div class="toast-header">
           <img :src="headerImg" alt="" id="header-img">
@@ -19,6 +20,7 @@
 </template>
 
 <script>
+
 export default {
   name: "Toast",
   props: {
@@ -32,10 +34,15 @@ export default {
       default: '/static/images/default-avatar.png'
     },
     right: {
-      default: '11 mins ago'
+      default: '1 seconds ago'
     },
     body: {
       default: 'Hello, world! This is a toast message.'
+    }
+  },
+  data() {
+    return {
+      isPhone: this.$utils.isPhone()
     }
   },
   methods: {

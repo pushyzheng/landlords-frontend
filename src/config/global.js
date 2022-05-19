@@ -9,6 +9,8 @@ import utils from './utils'
 // axios全局配置Token头
 axios.defaults.headers.common['token'] = localStorage.getItem('token');
 
+const eventBus = new Vue()
+
 export default {
   install() {
     Vue.prototype.$http = axios;
@@ -17,5 +19,7 @@ export default {
     Vue.prototype.$notif = notif
     Vue.prototype.$images = images
     Vue.prototype.$utils = utils
+    /* Event bus */
+    Vue.prototype.$eventBus = eventBus
   }
 }

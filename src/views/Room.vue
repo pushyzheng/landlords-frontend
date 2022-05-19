@@ -1,24 +1,32 @@
 <template>
-  <div id="room-view">
+  <div id="room-view" v-bind:style="roomViewStyles">
     <!--左下角消息通知-->
     <Toast id="chat-toast"
            :header="toast.header"
            :body="toast.body"
-           :right="toast.right"
            :header-img="toast.headerImg"
            ref="chatToast"/>
 
     <!--游戏音效组件-->
     <GameAudio ref="gameAudio"/>
 
-    <!-- 右上角的背景音乐开关 -->
-    <div class="form-check form-switch" style="position: fixed;top: 20px;right: 20px;">
-      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
-             @change="pauseBGM" v-model="bgmSwtich">
-      <label class="form-check-label" for="flexSwitchCheckDefault" style="color: white">
-        背景音乐
-      </label>
-    </div>
+    <image-button url="/static/images/game-settings.png"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvasGameSettings"
+                  aria-controls="offcanvasRight"
+                  width="30"
+                  id="game-settings-btn"/>
+
+    <game-settings @tableBackgroundChanged="tableBackgroundChanged">
+      <!-- 右上角的背景音乐开关 -->
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+               @change="pauseBGM" v-model="bgmSwtich">
+        <label class="form-check-label" for="flexSwitchCheckDefault">
+          背景音乐
+        </label>
+      </div>
+    </game-settings>
 
     <mu-flex justify-content="center">
       <TopCard :cards="room.topCards" v-if="room != null && showTopCards"/>
@@ -40,22 +48,19 @@
     </div>
 
     <!--准备和退出房间操作按钮-->
-    <mu-flex justify-content="center" align-items="center">
-      <div v-if="userPreparing">
-        <button type="button" class="btn btn-primary btn-lg" style="margin-right: 1rem;border-radius: 1.3rem"
-                @click="ready" v-show="gamePreparing">
-          &nbsp;&nbsp;准备&nbsp;&nbsp;
-        </button>
-        <button type="button" class="btn btn-danger btn-lg" style="border-radius: 1.3rem"
-                @click="exitRoom" v-show="gamePreparing">
-          &nbsp;退出房间&nbsp;
-        </button>
+    <mu-flex justify-content="center" align-items="center" v-if="gamePreparing">
+      <div v-if="userPreparing" style="display: flex">
+        <image-button url="static/images/button-blue.png" width="150" @click="ready">
+          准备
+        </image-button>
+        <image-button url="static/images/button.png" width="150" @click="exitRoom">
+          退出
+        </image-button>
       </div>
       <div v-else>
-        <button type="button" class="btn btn-secondary btn-lg" style="margin-right: 1rem;border-radius: 1.3rem"
-                @click="unReady" v-show="gamePreparing">
-          &nbsp;&nbsp;取消准备&nbsp;&nbsp;
-        </button>
+        <image-button url="static/images/button-grey.png" width="170" @click="unReady">
+          取消准备
+        </image-button>
       </div>
     </mu-flex>
 
@@ -67,10 +72,6 @@
     <TableBoard ref="tableBoard" :room="room"
                 @selectCard="selectCardListener"
                 @distributeCard="distributeListener"/>
-
-    <!--当前玩家的信息和状态栏-->
-    <div id="bottom">
-    </div>
 
     <!-- 底层边栏的组件 -->
     <bottom-bar :room="room" :gamePreparing="gamePreparing"/>
@@ -106,14 +107,20 @@ import Countdown from "../components/Countdown";
 import Player from "../components/Player";
 import PlayerInfo from "../components/PlayerInfo";
 import BottomBar from "../components/BottomBar";
+import ImageButton from "../components/ImageButton";
+import GameSettings from "../components/GameSettings";
 
 export default {
   components: {
+    ImageButton, GameSettings,
     Countdown, TopCard, VerticleTip, GameAudio, CardList,
     Avatar, TableBoard, Toast, Player, PlayerInfo, BottomBar
   },
   data() {
     return {
+      roomViewStyles: {
+        'background-image': `url('${this.$images.getTableBackgroundImageById(2)}')`
+      },
       bgmSwtich: false,
       userPreparing: false,
       gameEndDialog: false,
@@ -131,7 +138,6 @@ export default {
       toast: {
         header: '',
         body: '',
-        right: '',
         headerImg: ''
       },
       chatContent: '',
@@ -156,6 +162,10 @@ export default {
     }
   },
   methods: {
+    tableBackgroundChanged(url) {
+      console.log(document.getElementById('room-view').style['background-image'])
+      document.getElementById('room-view').style.backgroundImage = `url('${url}')`
+    },
     /**
      * 刷新页面和进入房间时获取房间信息数据
      */
@@ -399,7 +409,6 @@ export default {
         this.toast.headerImg = message.sender.avatar
       }
       this.toast.body = message.content
-      this.toast.right = message.createTime
       this.$refs.chatToast.showWithTimeouit(3000)
       this.$refs.gameAudio.playChatAudio(message.typeId)
     }
@@ -419,9 +428,16 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-image: url("../assets/table-background.jpg");
   background-size: cover;
   height: 100vh;
+}
+
+#game-settings-btn {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  color: white;
+  font-weight: bolder
 }
 
 #other-player-user {

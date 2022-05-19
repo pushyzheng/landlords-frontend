@@ -1,4 +1,7 @@
 export default {
+  isNull(s) {
+    return s == null || s == undefined;
+  },
   isEmpty(s) {
     return s == null || s == undefined || s.length === 0;
   },

@@ -12,15 +12,10 @@
 export default {
   name: "ImageButton",
   props: {
-    text: {
-      default: 'submit'
-    },
     width: {
       default: 100
     },
-    url: {
-
-    }
+    url: {}
   },
   methods: {
     onClick() {

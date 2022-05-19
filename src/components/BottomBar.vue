@@ -1,14 +1,21 @@
 <template>
   <div id="bottom-bar">
-    <div>
-      <Avatar :url="getPlayerAvatar" id="bottom-bar-avatar"/>
-<!--      <span id="curuser-username">{{ curUser.username }}</span>-->
-<!--      <span id="curuser-money">-->
-<!--          <img src="../assets/money-bag.png" class="money-icon" alt="money-bag">-->
-<!--          {{ curUser.money }}-->
-<!--      </span>-->
+    <div id="chat-info" v-if="showChatInfo">
+      <ul class="list-group">
+        <li>
+          <a class="list-group-item list-group-item-action" href="javascript:void(0)"
+             v-for="msg in defaultMessage"
+             v-bind:key="msg.content"
+             @click="sendChatMessage(msg.type, msg.content)">
+            {{ msg.content }}</a>
+        </li>
+      </ul>
     </div>
-    <div id="bottom-bar-chat">
+    <image-button url="/static/images/chat.png" width="40" id="chat-button" @click="showChatInfo=!showChatInfo"/>
+
+    <Avatar :url="getPlayerAvatar" id="bottom-bar-avatar"/>
+
+    <div id="bottom-bar-chat" v-if="false">
       <input type="text" class="form-control" id="chat-input" v-model="chatContent">
       <div class="btn-group">
         <button class="btn btn-secondary btn-lg" type="button" @click="sendChatMessage(0, chatContent)">
@@ -27,7 +34,7 @@
         </ul>
       </div>
     </div>
-    <div>
+    <div v-if="false">
       <!--房间当前的倍数-->
       <span id="room-multiple" v-show="!gamePreparing">当前倍数：{{ room == null ? 0 : room.multiple }}</span>
     </div>
@@ -37,15 +44,17 @@
 <script>
 import Avatar from "./Avatar";
 import chatConfig from '../config/chat'
+import ImageButton from "./ImageButton";
 
 export default {
   name: "Bottom",
-  components: {Avatar},
+  components: {ImageButton, Avatar},
   props: ['room', 'gamePreparing'],
   data() {
     return {
       defaultMessage: chatConfig.defaultMessage,
-      chatContent: null
+      chatContent: null,
+      showChatInfo: false
     }
   },
   computed: {
@@ -61,6 +70,7 @@ export default {
      * 发送聊天消息
      */
     sendChatMessage(type, content) {
+      this.showChatInfo = false
       if (type === 0 && content.length == 0) {
         this.$notif.warning('发送消息不能为空')
         return
@@ -79,12 +89,30 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px;
-  background-color: rgba(0, 0, 0, .54);
 }
 
 #bottom-bar-chat {
   display: flex;
+}
+
+#bottom-bar-avatar {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+}
+
+#chat-button {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+}
+
+#chat-info {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  max-height: 40vh;
+  overflow-y: scroll;
 }
 
 #chat-input {
@@ -121,6 +149,11 @@ export default {
 
   #bottom-bar-chat {
     display: none;
+  }
+
+  #chat-info {
+    max-height: 60vh;
+    overflow-y: scroll;
   }
 }
 </style>

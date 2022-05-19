@@ -265,10 +265,6 @@ export default {
   padding: 10px 20px;
 }
 
-.bid-button {
-  margin-right: 20px;
-}
-
 #bid-operation {
   display: flex;
   justify-content: center;
@@ -284,12 +280,7 @@ export default {
   margin-top: 20px;
 }
 
-@media screen and (max-width: 840px) {
-
-  .bid-button {
-    margin-right: 10px;
-  }
-
+@media screen and (max-width: 900px) {
 }
 
 </style>

@@ -5,10 +5,10 @@ import App from './App'
 import router from './router'
 import global from './config/global'
 import store from './store'
+// third-party components
 import MuseUI from 'muse-ui';
 import 'muse-ui/dist/muse-ui.css';
 import VueToast from 'vue-toast-notification';
-//import 'vue-toast-notification/dist/theme-default.css';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import Popover from 'vue-js-popover'
 import VueFullscreen from 'vue-fullscreen'
