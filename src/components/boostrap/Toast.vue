@@ -1,6 +1,6 @@
 <template>
-  <div class="position-absolute start-50 translate-middle-x"
-       v-bind:class="{'top-0': isPhone, 'bottom-0': !isPhone}">
+  <div class="position-absolute top-0" style="z-index: 99999"
+       v-bind:class="{'start-50': isPhone, 'end-0': !isPhone, 'translate-middle-x': isPhone}">
     <div>
       <div :id="id" class="toast" role="alert" aria-atomic="true">
         <div class="toast-header">

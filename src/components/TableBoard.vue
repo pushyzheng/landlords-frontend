@@ -38,7 +38,13 @@
            suithearts: typeClass(card, 'HEART'), suitdiamonds: typeClass(card, 'DIAMOND'),
            selected: isSelected(index), bigjoker:  isBigJoker(card), smalljoker: isSmallJoker(card)}"
              @click="selectCard(index)">
-          <p>{{ card.numberValue | cardNumberFilter }}</p>
+          <span v-if="isBigJoker(card)">
+            <img src="static/images/card/big-joker.png" alt="" class="joker">
+          </span>
+          <span v-if="isSmallJoker(card)">
+            <img src="static/images/card/small-joker.png" alt="" class="joker">
+          </span>
+          <p v-if="!isBigJoker(card) && !isSmallJoker(card)">{{ card.numberValue | cardNumberFilter }}</p>
         </div>
       </div>
     </div>
@@ -233,7 +239,7 @@ export default {
       else if (value == 11) return 'J';
       else if (value == 12) return 'Q';
       else if (value == 13) return 'K';
-      else if (value == 14 || value == 15) return '王'
+      else if (value == 14 || value == 15) return ' '
       else return value;
     }
   },
@@ -274,10 +280,6 @@ export default {
 #play-operation {
   display: flex;
   justify-content: center;
-}
-
-#my-card {
-  margin-top: 20px;
 }
 
 @media screen and (max-width: 900px) {

@@ -6,7 +6,13 @@
            suitspades: typeClass(card, 'SPADE'), suitclubs: typeClass(card, 'CLUB'),
            suithearts: typeClass(card, 'HEART'), suitdiamonds: typeClass(card, 'DIAMOND'),
            bigjoker:  isBigJoker(card), smalljoker: isSmallJoker(card)}">
-      <p>{{ card.numberValue | cardNumberFilter }}</p>
+      <span v-if="isBigJoker(card)">
+        <img src="static/images/card/big-joker.png" alt="" class="joker">
+      </span>
+      <span v-if="isSmallJoker(card)">
+            <img src="static/images/card/small-joker.png" alt="" class="joker">
+      </span>
+      <p v-if="!isBigJoker(card) && !isSmallJoker(card)">{{ card.numberValue | cardNumberFilter }}</p>
     </div>
   </div>
 </template>

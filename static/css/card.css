@@ -1,12 +1,11 @@
 /** {margin: 0; padding: 0;}*/
-
 body {
   background: #00a651;
 }
 
 /* 扑克牌层叠的大小 */
 .overlapping {
-  margin-left: -103px;;
+  margin-left: -6rem
 }
 
 /*被选择*/
@@ -69,31 +68,34 @@ body {
   font-size: 30px;
 }
 
+.joker {
+  width: 3rem;
+  margin-top: 0.6rem
+}
+
 /*方块数字*/
 .suitdiamonds p {
-  /*text-align: center;*/
-  /*font: 100px/220px Georgia, serif;*/
-  left: 3px;
+  left: 8px;
   top: 5px;
   color: #ff0000;
 }
 
 /*红桃数字*/
 .suithearts p {
-  left: 3px;
+  left: 8px;
   top: 5px;
   color: #ff0000;
 }
 
 /*梅花数字*/
 .suitclubs p {
-  left: 3px;
+  left: 8px;
   top: 5px;
 }
 
 /*黑桃数字*/
 .suitspades p {
-  left: 3px;
+  left: 8px;
   top: 5px;
 }
 
@@ -127,14 +129,14 @@ body {
 
 div[class*='suit']:before {
   position: absolute;
-  font-size: 35px;
+  font-size: 2rem;
   left: 5px;
-  top: 25px;
+  top: 2rem;
 }
 
 div[class*='suit']:after {
   position: absolute;
-  font-size: 35px;
+  font-size: 2rem;
   right: 5px;
   bottom: 25px;
 }

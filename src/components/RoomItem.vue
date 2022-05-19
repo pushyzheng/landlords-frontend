@@ -23,7 +23,7 @@
       <!--房主头像-->
       <mu-list-item-action>
         <mu-avatar>
-          <img :src="room.owner.avatar">
+          <img :src="roomOwnerAvatar" alt="avatar">
         </mu-avatar>
       </mu-list-item-action>
       <!--房间信息-->
@@ -60,6 +60,11 @@ export default {
     }
   },
   props: ['room'],
+  computed: {
+    roomOwnerAvatar() {
+      return this.$images.getUserAvatar(this.room.owner.avatar)
+    }
+  },
   methods: {
     enterRoom() {
       let curRoomId = localStorage.getItem('CURRENT_ROOM_ID');

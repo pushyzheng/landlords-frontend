@@ -1,5 +1,5 @@
 <template>
-  <div id="game-center-view">
+  <div id="game-center-view" v-bind:style="gameCenterViewStyles">
     <!--欢迎音乐-->
     <audio loop="loop" :src="welcomeMusicUrl" autoplay="autoplay"/>
 
@@ -10,7 +10,7 @@
       游戏大厅
     </div>
 
-    <image-button class="position-absolute top-0 end-0" width="70" style="padding: 1rem"
+    <image-button class="position-absolute top-0 end-0" width="50" style="padding: 1rem"
                   data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
                   :url="avatarUrl"/>
 
@@ -65,13 +65,13 @@ export default {
   components: {ImageButton, AlertNew, VerticleTip, RoomItem, Modal, Profile},
   data() {
     return {
-      roomListStyleObj: {
-        minHeight: document.documentElement.clientHeight / 1.5 + 'px'
-      },
       title: null,
       password: null,
       welcomeMusicUrl: musicUrls.welcome,
-      roomList: []
+      roomList: [],
+      gameCenterViewStyles: {
+        'background-image': `url('${this.$images.getGameCenterBackground()}')`
+      }
     }
   },
   computed: {
@@ -133,7 +133,6 @@ export default {
 
 #game-center-view {
   padding: 10px;
-  background-image: url("../assets/game-center-bg.jpg");
   background-size: cover;
   height: 100vh;
 }

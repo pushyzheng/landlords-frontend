@@ -1,6 +1,8 @@
 import enums from './enums'
 import utils from './utils'
 
+let join = (dir, filename) => `${dir}/${filename}`
+
 const STATIC_IMAGES_PATH = 'static/images'
 const TABLE_BG_IMAGES_PATH = STATIC_IMAGES_PATH + '/table'
 
@@ -12,7 +14,11 @@ const tableBackgroundImages = [
   'table-background-3.jpg',
 ]
 
-let join = (dir, filename) => `${dir}/${filename}`
+const gameCenterBackgroundImages = {
+  morning: join(STATIC_IMAGES_PATH, 'game-center-bg-morning.jpg'),
+  afternoon: join(STATIC_IMAGES_PATH, 'game-center-bg.jpg'),
+  night: join(STATIC_IMAGES_PATH, 'game-center-bg-night.jpg')
+}
 
 export default {
   getUserAvatar: user => {
@@ -56,5 +62,20 @@ export default {
       filename = tableBackgroundImages[0]
     }
     return join(TABLE_BG_IMAGES_PATH, filename)
+  },
+  /**
+   * 游戏大厅的背景图片, 根据当前的时间点来返回不同的背景图片
+   */
+  getGameCenterBackground() {
+    let hours = new Date().getHours()
+    let now = undefined
+    if (hours > 9 && hours < 13) {
+      now = 'morning'
+    } else if (hours >= 13 && hours < 18) {
+      now = 'afternoon'
+    } else {
+      now = 'night'
+    }
+    return gameCenterBackgroundImages[now]
   }
 }

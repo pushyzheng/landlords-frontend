@@ -1,12 +1,12 @@
 <template>
   <div id="login-view">
     <div id="login-btn-group">
-      <image-button width="200" url="static/images/login-btn-blue.png" id="qq-login-btn"
+      <image-button width="200" url="https://static.pushyzheng.com/images/login-btn-blue.png" id="qq-login-btn"
                     @click="redirectQQLogin">
         QQ 登录
       </image-button>
 
-      <image-button width="200" url="static/images/login-btn-yellow.png"
+      <image-button width="200" url="https://static.pushyzheng.com/images/login-btn-yellow.png"
                     @click="showLoginModal">
         <span style="color: dimgray">账号登录</span>
       </image-button>

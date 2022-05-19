@@ -6,7 +6,7 @@ body {
 
 /* 扑克牌层叠的大小 */
 .overlapping {
-  margin-left: -45px;
+  margin-left: -2.5rem
 }
 
 .move-up {
@@ -43,7 +43,7 @@ body {
 
 /* For IE 6/7 (trigger hasLayout) */
 .hand {
-  zoom:1;
+  zoom:0.8;
   display: flex;
 }
 
@@ -64,6 +64,11 @@ body {
   position: absolute;
   font-weight: bolder;
   font-size: 22px;
+}
+
+.joker {
+  width: 2rem;
+  margin-top: 0.6rem
 }
 
 /*方块数字*/
