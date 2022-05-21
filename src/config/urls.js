@@ -1,8 +1,8 @@
 import utils from "./utils";
 
-let host = "api.landlords.pushyzheng.com";
+// let host = "api.landlords.pushyzheng.com";
 // let host = "localhost:8080";
-// let host = "192.168.0.110:8080";
+let host = "192.168.0.109:8080";
 
 let domain = 'http://' + host;
 

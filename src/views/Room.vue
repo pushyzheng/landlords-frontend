@@ -1,15 +1,5 @@
 <template>
   <div id="room-view" v-bind:style="roomViewStyles">
-    <!--左下角消息通知-->
-    <Toast id="chat-toast"
-           :header="toast.header"
-           :body="toast.body"
-           :header-img="toast.headerImg"
-           ref="chatToast"/>
-
-    <!--游戏音效组件-->
-    <GameAudio ref="gameAudio"/>
-
     <image-button url="/static/images/game-settings.png"
                   data-bs-toggle="offcanvas"
                   data-bs-target="#offcanvasGameSettings"
@@ -28,9 +18,12 @@
       </div>
     </game-settings>
 
-    <mu-flex justify-content="center">
-      <TopCard :cards="room.topCards" v-if="room != null && showTopCards"/>
-    </mu-flex>
+    <!--三张底牌-->
+    <div class="flex-center" id="top-cards">
+      <card-list :data="room.topCards" scale="0.3" :overlapping="false"
+                 :selectable="false"
+                 v-if="room != null && showTopCards"/>
+    </div>
 
     <!--其他玩家用户信息-->
     <div id="other-player-user">
@@ -65,16 +58,23 @@
     </mu-flex>
 
     <!--当前玩家最近出的牌-->
-    <div style="display: flex;justify-content: center;">
-      <CardList :cards="curPlayer.recentCards" v-if="curPlayer != null"/>
+    <div class="flex-center">
+      <card-list :data="curPlayer.recentCards"
+                 :scale="0.5"
+                 v-if="curPlayer != null"/>
     </div>
 
-    <TableBoard ref="tableBoard" :room="room"
-                @selectCard="selectCardListener"
-                @distributeCard="distributeListener"/>
+    <TableBoard ref="tableBoard" :room="room"/>
 
     <!-- 底层边栏的组件 -->
     <bottom-bar :room="room" :gamePreparing="gamePreparing"/>
+
+    <!--消息通知-->
+    <Toast id="chat-toast"
+           :header="toast.header"
+           :body="toast.body"
+           :header-img="toast.headerImg"
+           ref="chatToast"/>
 
     <!--结束时显示信息的Dialog-->
     <mu-dialog :title="gameEndDialogTitle" width="450" :open.sync="gameEndDialog">
@@ -91,6 +91,9 @@
         <mu-button color="primary" round large @click="continueGame">继续游戏</mu-button>
       </div>
     </mu-dialog>
+
+    <!--游戏音效组件-->
+    <GameAudio ref="gameAudio"/>
   </div>
 </template>
 
@@ -98,10 +101,9 @@
 import enums from '../config/enums'
 import TableBoard from "../components/TableBoard";
 import Avatar from "../components/Avatar";
-import CardList from "../components/PlayerCardList";
+import CardList from "../components/card/CardList";
 import GameAudio from "../components/GameAudio";
 import VerticleTip from "../components/VerticleTip";
-import TopCard from "../components/TopCard";
 import Toast from "../components/boostrap/Toast";
 import Countdown from "../components/Countdown";
 import Player from "../components/Player";
@@ -113,13 +115,13 @@ import GameSettings from "../components/GameSettings";
 export default {
   components: {
     ImageButton, GameSettings,
-    Countdown, TopCard, VerticleTip, GameAudio, CardList,
+    Countdown, VerticleTip, GameAudio, CardList,
     Avatar, TableBoard, Toast, Player, PlayerInfo, BottomBar
   },
   data() {
     return {
       roomViewStyles: {
-        'background-image': `url('${this.$images.getTableBackgroundImageById(2)}')`
+        'background-image': `url('${this.$images.getTableBackgroundImageById(1)}')`
       },
       bgmSwtich: false,
       userPreparing: false,
@@ -376,12 +378,6 @@ export default {
       clearTimeout(this.wsTimeoutObj);
       this.startWsTimeOut();
     },
-    selectCardListener() {
-      this.$refs.gameAudio.playSelectMusic();  // 播放选择牌音效
-    },
-    distributeListener() {
-      this.$refs.gameAudio.playDealAudio();  // 播放发牌音效
-    },
     continueGame() {  // 点击结算Dialog继续游戏触发的事件
       this.$refs.gameAudio.playNormalMusic();
       this.gameEndDialog = false;
@@ -414,6 +410,7 @@ export default {
     }
   },
   created() {
+    this.$utils.removeModalBackdrop()
     if (localStorage.getItem('token') != null) {
       this.connectWebsocket();
     }
@@ -438,6 +435,10 @@ export default {
   right: 1.5rem;
   color: white;
   font-weight: bolder
+}
+
+#top-cards {
+  margin-left: 30vw;
 }
 
 #other-player-user {

@@ -21,7 +21,7 @@ export default {
     mql.onchange = this.onOrientationChanged
     this.isLandscape = mql.matches
 
-    if (localStorage.getItem('token') != null) {
+    if (this.$storage.token.hasToken()) {
       this.getUserInfo();
     }
   },

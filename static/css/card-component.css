@@ -1,0 +1,165 @@
+/* 牌的本体 */
+.card {
+  width: 9rem;
+  height: 13rem;
+  border-radius: 1rem;
+  background: white;
+  -webkit-box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.3);
+}
+
+.card p {
+  position: absolute;
+  font-weight: bolder;
+  font-size: 2rem;
+}
+
+.card:hover {
+  cursor: pointer;
+}
+
+/* 方块 */
+.suitdiamonds p {
+  left: 8px;
+  top: 5px;
+  color: #ff0000;
+}
+
+.suitdiamonds:before, .suitdiamonds:after {
+  content: "♦";
+  color: #ff0000;
+}
+
+/* 红桃 */
+.suithearts p {
+  left: 8px;
+  top: 5px;
+  color: #ff0000;
+}
+
+.suithearts:before, .suithearts:after {
+  content: "♥";
+  color: #ff0000;
+}
+
+/* 梅花数字 */
+.suitclubs p {
+  left: 8px;
+  top: 5px;
+}
+
+.suitclubs:before, .suitclubs:after {
+  content: "♣";
+  color: #000;
+}
+
+/* 黑桃 */
+.suitspades p {
+  left: 8px;
+  top: 5px;
+}
+
+.suitspades:before, .suitspades:after {
+  content: "♠";
+  color: #000;
+}
+
+.joker {
+  width: 3rem;
+  margin-top: 0.6rem
+}
+
+/* 左上角的花色图案, 的大小和位置 */
+div[class*='suit']:before {
+  position: absolute;
+  font-size: 1.8rem;
+  left: 0.2rem;
+  top: 2.3rem;
+}
+
+/* 右下角的花色图案, 的大小和位置 */
+div[class*='suit']:after {
+  position: absolute;
+  font-size: 1.8rem;
+  right: 0.2rem;
+  bottom: 1rem;
+}
+
+/*被选择*/
+.selected {
+  position: relative;
+  bottom: 20px;
+}
+
+/* 手机端样式适应 */
+@media screen and (max-width: 900px) {
+
+  /*牌数字的大小*/
+  .card p {
+    font-size: 1.6rem;
+  }
+
+  div[class*='suit']:before {
+    position: absolute;
+    font-size: 0.8rem;
+    left: 5px;
+    top: 35px;
+  }
+
+  div[class*='suit']:after {
+    position: absolute;
+    font-size: 0.8rem;
+    right: 5px;
+    bottom: 5px;
+  }
+
+  /*牌的大小*/
+  .card {
+    width: 5rem;
+    height: 7.5rem;
+  }
+
+  /*方块数字*/
+  .suitdiamonds p {
+    left: 3px;
+    top: 0px;
+  }
+
+  /*红桃数字*/
+  .suithearts p {
+    left: 3px;
+    top: 0px;
+  }
+
+  /*梅花数字*/
+  .suitclubs p {
+    left: 3px;
+    top: 0px;
+  }
+
+  /*黑桃数字*/
+  .suitspades p {
+    left: 3px;
+    top: 0px;
+  }
+
+  .joker {
+    width: 2.5rem;
+    margin-top: 0.6rem
+  }
+
+  /*被选择*/
+  .selected {
+    position: relative;
+    bottom: 1rem;
+  }
+}
+
+/* 大屏幕适应 */
+@media screen and (min-width: 1024px) {
+
+  .card:hover {
+    background-color: #D3D3D3;
+    transition-duration: 0.3s;
+  }
+}

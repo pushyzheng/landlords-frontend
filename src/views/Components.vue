@@ -12,6 +12,13 @@
 
     <div>
       <div>
+        <h1>Image Button</h1>
+        <image-button url="static/images/button-blue.png">
+          SUBMIT
+        </image-button>
+      </div>
+
+      <div>
         <h1>alert</h1>
         <button class="btn btn-primary" @click="$refs.alertNew.success('success')">alert success</button>
         <button class="btn btn-primary" @click="$refs.alertNew.warning('warnning')">alert warnning</button>
@@ -51,12 +58,27 @@
           <card :data="{numberValue: 1, type:'CLUB'}"/>
           <card :data="{numberValue: 1, type:'HEART'}"/>
           <card :data="{numberValue: 1, type:'DIAMOND'}"/>
+          <card :data="{numberValue: 14,type:'SMALL_JOKER'}"/>
+          <card :data="{numberValue: 15,type:'BIG_JOKER'}"/>
         </div>
       </div>
 
       <div>
         <h1>CardList</h1>
+        <card-list :data="threeCards" :overlapping="false"/>
+
+        <h1>CardList overlapping</h1>
         <card-list :data="cards"/>
+
+        <h1>CardList - selectable</h1>
+        <div style="margin-bottom: 2rem">
+          selectedList: {{ selectedList }}
+        </div>
+        <button @click="$refs.selectedCardList.resetSelected()">重置</button>
+        <card-list :data="cards" selectable="true" ref="selectedCardList" @select="onSelected"/>
+
+        <h1>CardList zoom - 0.5</h1>
+        <card-list :data="cards" scale="0.5"/>
       </div>
 
       <Modal title="NewMessage" @submit="submit" ref="modal" id="exampleModal"
@@ -79,15 +101,17 @@
 </template>
 
 <script>
+import mock from "../config/mock";
 import Modal from "../components/boostrap/Modal";
 import AlertNew from "../components/boostrap/Alert";
 import Toast from "../components/boostrap/Toast";
 import Countdown from "../components/Countdown";
 import Card from "../components/card/Card";
 import CardList from "../components/card/CardList";
+import ImageButton from "../components/ImageButton";
 
 export default {
-  components: {CardList, AlertNew, Modal, Toast, Countdown, Card},
+  components: {ImageButton, CardList, AlertNew, Modal, Toast, Countdown, Card},
   name: "Components",
   data() {
     return {
@@ -97,15 +121,18 @@ export default {
         numberValue: 1,
         type: 'CLUB'
       },
-      cards: []
+      cards: [],
+      threeCards: [],
+      selectedList: []
     }
   },
   created() {
+    this.cards = mock.cards
     let mockCards = []
-    for (let i = 0; i < 13; i++) {
-      mockCards.push({numberValue: i + 1, type: 'CLUB'})
+    for (let i = 0; i < 3; i++) {
+      mockCards.push({numberValue: i + 1, type: 'SPADE'})
     }
-    this.cards = mockCards
+    this.threeCards = mockCards;
   },
   methods: {
     toggle() {
@@ -137,6 +164,9 @@ export default {
     },
     toggleApi() {
       this.$fullscreen.toggle()
+    },
+    onSelected(idx, selected) {
+      this.selectedList = selected
     }
   }
 }

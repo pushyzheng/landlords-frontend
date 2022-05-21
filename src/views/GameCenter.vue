@@ -1,18 +1,18 @@
 <template>
   <div id="game-center-view" v-bind:style="gameCenterViewStyles">
     <!--欢迎音乐-->
-    <audio loop="loop" :src="welcomeMusicUrl" autoplay="autoplay"/>
-
-    <!--左侧个人信息-->
-    <Profile/>
+    <audio loop="loop" :src="welcomeMusicUrl"/>
 
     <div id="game-center-title">
       游戏大厅
     </div>
 
-    <image-button class="position-absolute top-0 end-0" width="50" style="padding: 1rem"
+    <!--左侧个人信息以及按钮-->
+    <image-button class="position-absolute top-0 end-0" width="50" round="true"
+                  style="padding: 1rem"
                   data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"
                   :url="avatarUrl"/>
+    <Profile/>
 
     <!--没有房间显示的提示-->
     <div v-if="roomList.length == 0" id="no-room">
@@ -80,6 +80,7 @@ export default {
     }
   },
   created() {
+    this.$utils.removeModalBackdrop()
     if (localStorage.getItem('token') == null) {
       this.$router.push({name: 'Login'})
     } else {
@@ -95,25 +96,23 @@ export default {
   },
   methods: {
     getRoomList() {
-      this.$http.get(this.$urls.rooms.listRoom).then(
-        response => {
+      this.$http.get(this.$urls.rooms.listRoom)
+        .then(response => {
           this.roomList = response.data.data;
-        }
-      ).catch(error => {
+        })
+        .catch(error => {
           console.error(error)
           // this.$router.push({name: 'Login'})
           // location.href = '/'
-        }
-      )
+        })
     },
     createRoom() {
       let body = {password: this.password, title: this.title};
       this.$http.post(this.$urls.rooms.create, body)
         .then(response => {
           let roomId = response.data.data.id;
-          // this.$router.push({name: 'Room', params: {id: roomId}})
-          location.href = '/#/rooms/' + roomId
-          location.reload();
+          this.$refs.createRoomModal.toggle()
+          this.$router.push({name: 'Room', params: {id: roomId}})
           localStorage.setItem('CURRENT_ROOM_ID', roomId);
         })
         .catch(error => {

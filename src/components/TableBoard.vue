@@ -11,7 +11,7 @@
     </div>
 
     <!--出牌和不出按钮-->
-    <div id="play-operation" v-show="showPlayBtn">
+    <div id="play-operation" v-show="showPlayBtn" class="position-absolute top-50 start-50 translate-middle">
       <div>
         <div style="display: flex;justify-content: center;margin-bottom: 10px;">
           <Countdown ref="countdown"/>
@@ -29,44 +29,32 @@
     </div>
 
     <!--当前玩家的牌-->
-    <div id="my-card">
-      <div class="hand">
-        <div class="card"
-             v-for="(card, index) in myCardList"
-             v-bind:class="{overlapping: isOverlapping(index),
-           suitspades: typeClass(card, 'SPADE'), suitclubs: typeClass(card, 'CLUB'),
-           suithearts: typeClass(card, 'HEART'), suitdiamonds: typeClass(card, 'DIAMOND'),
-           selected: isSelected(index), bigjoker:  isBigJoker(card), smalljoker: isSmallJoker(card)}"
-             @click="selectCard(index)">
-          <span v-if="isBigJoker(card)">
-            <img src="static/images/card/big-joker.png" alt="" class="joker">
-          </span>
-          <span v-if="isSmallJoker(card)">
-            <img src="static/images/card/small-joker.png" alt="" class="joker">
-          </span>
-          <p v-if="!isBigJoker(card) && !isSmallJoker(card)">{{ card.numberValue | cardNumberFilter }}</p>
-        </div>
-      </div>
+    <div id="my-card" class="position-absolute bottom-0 start-50 translate-middle-x">
+      <card-list ref="cardList"
+                 :audio="true"
+                 :data="myCardList" selectable="true"/>
     </div>
 
+    <!--发牌音效-->
+    <audio id="deal-audio" src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Special/Special_Dispatch.mp3"/>
   </div>
 </template>
 
 <script>
-import PlayerCardList from "./PlayerCardList";
+import CardList from "./card/CardList";
 import Countdown from "../components/Countdown";
 
 export default {
   name: "TableBoard",
-  components: {PlayerCardList, Countdown},
+  components: {CardList, Countdown},
   data() {
     return {
       dealInterval: null,
+      dealAudioElement: null,
 
       cards: [],             // 用来填充手中牌的数据
       myCardList: [],        // 当前手中牌对应的数据列表
       simulationIndex: 0,
-      selectCardList: [],
 
       showPlayBtn: false,
       showBidBtn: false,
@@ -75,26 +63,6 @@ export default {
   },
   props: ['room'],
   methods: {
-    isOverlapping(index) {
-      return index != 0;
-    },
-    isSelected(index) {
-      for (let i = 0; i < this.selectCardList.length; i++) {
-        if (this.selectCardList[i] == index) {
-          return true
-        }
-      }
-      return false;
-    },
-    typeClass(card, type) {
-      return card.type === type;
-    },
-    isBigJoker(card) {
-      return card.type === 'BIG_JOKER';
-    },
-    isSmallJoker(card) {
-      return card.type === 'SMALL_JOKER';
-    },
     showBid() {
       this.showBidBtn = true
     },
@@ -109,7 +77,7 @@ export default {
       this.$http.get(this.$urls.player.myCards)
         .then(response => {
           this.cards = response.data.data;
-          this.$emit('distributeCard');
+          this.dealAudioElement.play()
           // 模拟发牌的动画，通过一个Interval函数来执行
           this.dealInterval = setInterval(this.dealIntervalMethod, 220);
         })
@@ -151,26 +119,15 @@ export default {
         });
     },
     /**
-     * 玩家点击牌处理逻辑
-     */
-    selectCard(index) {
-      this.$emit('selectCard');  // 发射selectCard信号让父组件接收
-      let i = this.selectCardList.indexOf(index);
-      if (i != -1) { // 该牌已选中
-        this.selectCardList.splice(i, 1);
-      } else {
-        this.selectCardList.push(index);
-      }
-    },
-    /**
      * 出牌
      */
     playCard() {
       let index = 0;
       let body = [];
-      this.selectCardList.sort(this.sortNumber);  // 对选择列表先进行排序
+      let selected = this.$refs.cardList.getSelected();
+      selected.sort(this.sortNumber);  // 对选择列表先进行排序
       for (let i = 0; i < this.myCardList.length; i++) {
-        if (this.selectCardList[index] == i) {
+        if (selected[index] == i) {
           body.push(this.myCardList[i]);
           index++;
         }
@@ -178,7 +135,7 @@ export default {
       this.$http.post(this.$urls.game.play, body)
         .then(response => {
           this.showPlayBtn = false;
-          this.selectCardList = [];
+          this.$refs.cardList.resetSelected();
           this.getMyCards();
         })
         .catch(error => this.$notif.warning(error.response.data.message));
@@ -188,7 +145,6 @@ export default {
         .then(response => {
           console.log(response.data.data);
           this.showPlayBtn = false;
-          this.selectCardList = [];
         })
         .catch(error => this.$notif.warning(error.response.data.message))
     },
@@ -227,20 +183,9 @@ export default {
     gameEndListener() {
       this.myCardList = [];
       this.otherPlayCardList = [];
-      this.selectCardList = [];
       this.showPlayBtn = false
       this.showBidBtn = false
       this.showPassbtn = false
-    }
-  },
-  filters: {
-    cardNumberFilter(value) {
-      if (value == 1) return 'A';
-      else if (value == 11) return 'J';
-      else if (value == 12) return 'Q';
-      else if (value == 13) return 'K';
-      else if (value == 14 || value == 15) return ' '
-      else return value;
     }
   },
   watch: {
@@ -254,21 +199,16 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
+    this.dealAudioElement = document.getElementById("deal-audio");
   }
 }
 </script>
 
 <style scoped>
-@import "../../static/css/card.css";
-
 #my-card {
   display: flex;
   justify-content: center;
-}
-
-.operation-button {
-  padding: 10px 20px;
 }
 
 #bid-operation {
@@ -278,8 +218,7 @@ export default {
 }
 
 #play-operation {
-  display: flex;
-  justify-content: center;
+
 }
 
 @media screen and (max-width: 900px) {

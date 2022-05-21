@@ -24,7 +24,7 @@
       <!-- 玩家出的牌 -->
       <div v-bind:class="playStateClass">
         <div class="player-recent-cards">
-          <CardList :cards="player.recentCards"/>
+          <card-list :data="player.recentCards" :scale="0.5"/>
         </div>
       </div>
       <div class="player-countdown">
@@ -47,7 +47,7 @@
 
 <script>
 import Avatar from "./Avatar";
-import CardList from "./PlayerCardList";
+import CardList from "./card/CardList";
 import Countdown from "./Countdown";
 import PlayerInfo from "./PlayerInfo";
 

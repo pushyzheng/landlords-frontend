@@ -1,0 +1,12 @@
+.unselectable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -4,7 +4,6 @@ export default {
     failing: 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/MusicEx/MusicEx_Lose.mp3'
   },
   welcome: 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/MusicEx/MusicEx_Welcome.mp3',
-  welcome: 'https://static.pushy.site/game/music/game-center-bgm.mp3',
   card: {
     SINGLE: {
       ONE: 'https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Man/Man_1.mp3',

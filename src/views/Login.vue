@@ -60,20 +60,17 @@ export default {
       }
       this.$http.post(this.$urls.auth.login, this.body)
         .then(response => {
-            let token = response.data.data
-            this.getUser(token);
-            this.$refs.loginModal.showDirect()
-            localStorage.setItem('token', token);
-            location.href = '/#/'
-            location.reload();
-          }
-        )
+          let token = response.data.data
+          this.getUser(token);
+          this.$refs.loginModal.showDirect()
+          this.$storage.token.set(token)
+          this.$router.push({name: 'GameCenter'})
+        })
         .catch(error => {
-            console.warn('登录失败: ', error)
-            this.$refs.alert.error('你的用户名或者密码可能有误!')
-            this.$refs.loginModal.reset()
-          }
-        )
+          console.warn('登录失败: ', error)
+          this.$refs.alert.error('你的用户名或者密码可能有误!')
+          this.$refs.loginModal.reset()
+        })
     },
     getUser(token) {
       this.$http.defaults.headers.common['token'] = token;

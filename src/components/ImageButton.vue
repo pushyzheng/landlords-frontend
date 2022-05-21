@@ -1,6 +1,7 @@
 <template>
-  <div class="image-button" @click="onClick">
-    <img :src="url" alt="" style="cursor: pointer"
+  <div class="image-button unselectable" @click="onClick">
+    <img :src="url" alt="image-button"
+         v-bind:class="{'image-button-round': round}"
          :width="width + 'rem'">
     <div id="image-button-text">
       <slot/>
@@ -14,6 +15,9 @@ export default {
   props: {
     width: {
       default: 100
+    },
+    round: {
+      default: false
     },
     url: {}
   },
@@ -45,5 +49,9 @@ export default {
   transform: translate(-50%, -50%);
   font-weight: bolder;
   font-size: 1.2rem;
+}
+
+.image-button-round {
+  border-radius: 50%;
 }
 </style>

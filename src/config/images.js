@@ -22,7 +22,7 @@ const gameCenterBackgroundImages = {
 
 export default {
   getUserAvatar: user => {
-    if (utils.isNull(user) || utils.isEmpty(user)) {
+    if (utils.isNull(user) || utils.isEmpty(user) || utils.isEmpty(user.avatar)) {
       return DEFAULT_AVATAR
     }
     return user.avatar

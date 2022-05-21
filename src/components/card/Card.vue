@@ -1,9 +1,20 @@
 <template>
-  <div>
-    <div class="card"
-         v-bind:class="cardClassObj">
-      <p>{{ data.numberValue | cardNumberFilter }}</p>
-    </div>
+  <div class="card unselectable" @click="onSelected"
+       v-bind:class="cardClassObj">
+      <span v-if="isBigJoker(data)">
+        <img src="static/images/card/big-joker.png" alt="" class="joker">
+      </span>
+    <span v-if="isSmallJoker(data)">
+            <img src="static/images/card/small-joker.png" alt="" class="joker">
+      </span>
+    <p v-if="!isBigJoker(data) && !isSmallJoker(data)">
+      {{ data.numberValue | cardNumberFilter }}
+    </p>
+
+    <!--选择牌音效-->
+    <audio id="select-audio">
+      <source src="https://hlddz.huanle.qq.com/resRoot-1.3.0.3/Sound/Special/SpecSelectCard.mp3" type="audio/mp3"/>
+    </audio>
   </div>
 </template>
 
@@ -11,23 +22,38 @@
 export default {
   name: "Card",
   props: {
-    data: {}
+    data: {},
+    audio: {
+      default: false
+    }
   },
   data() {
     return {
-      cardClassObj: {
+      audioElement: null
+    }
+  },
+  computed: {
+    cardClassObj() {
+      return {
         suitspades: this.data.type == 'SPADE',
         suitclubs: this.data.type == 'CLUB',
         suithearts: this.data.type == 'HEART',
         suitdiamonds: this.data.type == 'DIAMOND',
-        bigjoker: this.data.type == 'BIG_JOKER',
-        smalljoker: this.data.type == 'SMALL_JOKER'
       }
     }
   },
   methods: {
+    isBigJoker(card) {
+      return this.data.type === 'BIG_JOKER';
+    },
+    isSmallJoker(card) {
+      return this.data.type === 'SMALL_JOKER';
+    },
     onSelected() {
       this.$emit('select', this.data)
+      if (this.audio) {
+        this.audioElement.play();
+      }
     }
   },
   filters: {
@@ -36,13 +62,16 @@ export default {
       else if (value == 11) return 'J';
       else if (value == 12) return 'Q';
       else if (value == 13) return 'K';
-      else if (value == 14 || value == 15) return '王'
       else return value;
     }
+  },
+  mounted() {
+    this.audioElement = document.getElementById('select-audio')
   }
 }
 </script>
 
 <style scoped>
+@import "../../../static/css/card-component.css";
 
 </style>

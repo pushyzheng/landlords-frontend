@@ -75,7 +75,7 @@ export default {
     },
     logout() {
       if (confirm('确定要退出登录吗?')) {
-        localStorage.removeItem('token')
+        this.$storage.token.remove();
         this.$router.push({name: 'Login'})
         this.$notif.success('成功退出登录')
       }

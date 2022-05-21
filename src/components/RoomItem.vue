@@ -62,7 +62,7 @@ export default {
   props: ['room'],
   computed: {
     roomOwnerAvatar() {
-      return this.$images.getUserAvatar(this.room.owner.avatar)
+      return this.$images.getUserAvatar(this.room.owner)
     }
   },
   methods: {
@@ -89,9 +89,7 @@ export default {
       };
       this.$http.post(this.$urls.rooms.join, body).then(
         response => {
-          location.href = '/#/rooms/' + this.room.id
-          location.reload();
-          // this.$router.push({name: 'Room', params: {id: this.room.id}})
+          this.$router.push({name: 'Room', params: {id: this.room.id}})
           localStorage.setItem('CURRENT_ROOM_ID', this.room.id);
         }
       ).catch(
