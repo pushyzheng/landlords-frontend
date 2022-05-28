@@ -24,7 +24,9 @@
       <!-- 玩家出的牌 -->
       <div v-bind:class="playStateClass">
         <div class="player-recent-cards">
-          <card-list :data="player.recentCards" :scale="0.5"/>
+          <scale value="0.5" :origin="isLeft? 'left': 'right'">
+            <card-list :data="player.recentCards"/>
+          </scale>
         </div>
       </div>
       <div class="player-countdown">
@@ -35,7 +37,7 @@
     <!-- 显示剩余牌 -->
     <div class="remaining-cards"
          v-if="canShowRemainingCards"
-         v-bind:style="{'flex-direction': direction}">
+         v-bind:style="{'flex-direction': direction, float: isLeft ? 'left': 'right'}">
       <img src="static/images/pokerback.jpeg" alt="" class="remaining-cards-item">
       <img src="static/images/pokerback.jpeg" alt=""
            class="remaining-cards-item remaining-cards-overlapping"
@@ -50,13 +52,14 @@ import Avatar from "./Avatar";
 import CardList from "./card/CardList";
 import Countdown from "./Countdown";
 import PlayerInfo from "./PlayerInfo";
+import Scale from "./Scale";
 
 const DIRECTION_ROW = "row"
 const DIRECTION_ROW_REVERSE = "row-reverse"
 
 export default {
   name: "Player",
-  components: {Avatar, CardList, Countdown, PlayerInfo},
+  components: {Scale, Avatar, CardList, Countdown, PlayerInfo},
   props: {
     /**
      * 控制水平布局的方向, 即左右两边的玩家正好相反

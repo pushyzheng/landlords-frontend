@@ -34,6 +34,7 @@
         </ul>
       </div>
     </div>
+
     <div v-if="false">
       <!--房间当前的倍数-->
       <span id="room-multiple" v-show="!gamePreparing">当前倍数：{{ room == null ? 0 : room.multiple }}</span>

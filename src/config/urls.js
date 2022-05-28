@@ -1,59 +1,69 @@
 import utils from "./utils";
 
-// let host = "api.landlords.pushyzheng.com";
-// let host = "localhost:8080";
-let host = "192.168.0.109:8080";
+const STORATE_SERVER_DOMAIN_KEY = "serverDomain"
 
-let domain = 'http://' + host;
+const defaultDomain = "api.landlords.pushyzheng.com";
+// const defaultDomain = "localhost:8080";
+
+function getDomain() {
+  let storage = localStorage.getItem(STORATE_SERVER_DOMAIN_KEY);
+  return utils.isEmpty(storage) ? defaultDomain : storage;
+}
+
+function getBaseurl() {
+  return 'http://' + getDomain()
+}
 
 export default {
-  getDomain() {
-    let storage = localStorage.getItem('serverDomain');
-    return utils.isEmpty(storage) ? domain : storage;
+  domain() {
+    return getDomain()
+  },
+  setDomain(domain) {
+    localStorage.setItem(STORATE_SERVER_DOMAIN_KEY, domain)
   },
   auth: {
-    login: domain + '/login',
-    qqLogin: domain + '/qqLogin'
+    login: getBaseurl() + '/login',
+    qqLogin: getBaseurl() + '/qqLogin'
   },
   users: {
-    update: domain + '/users',
-    myself: domain + '/users/myself'
+    update: getBaseurl() + '/users',
+    myself: getBaseurl() + '/users/myself'
   },
   player: {
-    myCards: domain + '/player/cards',
-    isPlayerRound: domain + '/player/round',
-    isReady: domain + '/player/ready',
-    canPass: domain + '/player/pass',
-    canBid: domain + '/player/bidding'
+    myCards: getBaseurl() + '/player/cards',
+    isPlayerRound: getBaseurl() + '/player/round',
+    isReady: getBaseurl() + '/player/ready',
+    canPass: getBaseurl() + '/player/pass',
+    canBid: getBaseurl() + '/player/bidding'
   },
   rooms: {
-    listRoom: domain + '/rooms',
+    listRoom: getBaseurl() + '/rooms',
     getRoomById(id) {
-      return domain + `/rooms/${id}`
+      return getBaseurl() + `/rooms/${id}`
     },
-    create: domain + '/rooms',
-    join: domain + '/rooms/join',
-    exit: domain + '/rooms/exit'
+    create: getBaseurl() + '/rooms',
+    join: getBaseurl() + '/rooms/join',
+    exit: getBaseurl() + '/rooms/exit'
   },
   game: {
-    ready: domain + '/games/ready',
-    unReady: domain + '/games/unReady',
-    myCards: domain + '/games/cards',
-    bid: domain + '/games/bid',
-    play: domain + '/games/play',
-    pass: domain + '/games/pass'
+    ready: getBaseurl() + '/games/ready',
+    unReady: getBaseurl() + '/games/unReady',
+    myCards: getBaseurl() + '/games/cards',
+    bid: getBaseurl() + '/games/bid',
+    play: getBaseurl() + '/games/play',
+    pass: getBaseurl() + '/games/pass'
   },
   chat: {
-    send: domain + "/chat"
+    send: getBaseurl() + "/chat"
   },
   achievement: {
     getAchievementByUser: (id) => {
-      return domain + '/achievement/' + id
+      return getBaseurl() + '/achievement/' + id
     }
   },
   ws: {
     connect(token) {
-      return `ws://${host}/ws?token=${token}`
+      return `ws://${getDomain()}/ws?token=${token}`
     }
   }
 }

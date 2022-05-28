@@ -19,29 +19,33 @@
     </game-settings>
 
     <!--三张底牌-->
-    <div class="flex-center" id="top-cards">
-      <card-list :data="room.topCards" scale="0.3" :overlapping="false"
-                 :selectable="false"
-                 v-if="room != null && showTopCards"/>
+    <div id="top-cards">
+      <scale value="0.3" origin="">
+        <card-list :data="room.topCards" :overlapping="false"
+                   :selectable="false"
+                   v-if="room != null && showTopCards"/>
+      </scale>
     </div>
 
-    <!--其他玩家用户信息-->
     <div id="other-player-user">
-      <!--上家（左边玩家）-->
-      <Player :player="prevPlayer"
-              :gamePreparing="gamePreparing"
-              :show-count-down="countdown.prev"
-              ref="prevPlayer"/>
+      <!--其他玩家用户信息-->
+      <div id="other-player-user-row">
+        <!--上家（左边玩家）-->
+        <Player :player="prevPlayer"
+                :gamePreparing="gamePreparing"
+                :show-count-down="countdown.prev"
+                ref="prevPlayer"/>
 
-      <!--下家（右边玩家）-->
-      <Player :player="nextPlayer"
-              :gamePreparing="gamePreparing"
-              :show-count-down="countdown.next"
-              ref="nextPlayer" direction="row-reverse"/>
+        <!--下家（右边玩家）-->
+        <Player :player="nextPlayer"
+                :gamePreparing="gamePreparing"
+                :show-count-down="countdown.next"
+                ref="nextPlayer" direction="row-reverse"/>
+      </div>
     </div>
 
     <!--准备和退出房间操作按钮-->
-    <mu-flex justify-content="center" align-items="center" v-if="gamePreparing">
+    <div v-if="gamePreparing" class="flex-center" style="height: 100vh">
       <div v-if="userPreparing" style="display: flex">
         <image-button url="static/images/button-blue.png" width="150" @click="ready">
           准备
@@ -55,16 +59,10 @@
           取消准备
         </image-button>
       </div>
-    </mu-flex>
-
-    <!--当前玩家最近出的牌-->
-    <div class="flex-center">
-      <card-list :data="curPlayer.recentCards"
-                 :scale="0.5"
-                 v-if="curPlayer != null"/>
     </div>
 
-    <TableBoard ref="tableBoard" :room="room"/>
+    <TableBoard class="position-absolute bottom-0 start-50 translate-middle-x"
+      ref="tableBoard" :room="room" :curPlayer="curPlayer"/>
 
     <!-- 底层边栏的组件 -->
     <bottom-bar :room="room" :gamePreparing="gamePreparing"/>
@@ -111,9 +109,11 @@ import PlayerInfo from "../components/PlayerInfo";
 import BottomBar from "../components/BottomBar";
 import ImageButton from "../components/ImageButton";
 import GameSettings from "../components/GameSettings";
+import Scale from "../components/Scale";
 
 export default {
   components: {
+    Scale,
     ImageButton, GameSettings,
     Countdown, VerticleTip, GameAudio, CardList,
     Avatar, TableBoard, Toast, Player, PlayerInfo, BottomBar
@@ -438,10 +438,19 @@ export default {
 }
 
 #top-cards {
-  margin-left: 30vw;
+  position: fixed;
+  right: 30vh;
+  top: 5vh;
+  height: 1px;
 }
 
 #other-player-user {
+  position: fixed;
+  width: 100%;
+  top: 20vh
+}
+
+#other-player-user-row {
   display: flex;
   justify-content: space-between;
   padding: 10px;

@@ -8,7 +8,7 @@
         <div class="form-floating mb-3">
           <input type="email" class="form-control" id="server-domain-input" placeholder="服务器地址"
                  v-model="serverDomain">
-          <label>服务器地址</label>
+          <label>服务器域名</label>
         </div>
       </div>
     </Modal>
@@ -20,14 +20,12 @@ import Modal from "./boostrap/Modal";
 import Alert from "./boostrap/Alert";
 import Vue from "vue";
 
-const STORATE_SERVER_DOMAIN_KEY = "serverDomain"
-
 export default {
   name: "SystemSettings",
   components: {Modal, Alert},
   data() {
     return {
-      serverDomain: this.$urls.getDomain()
+      serverDomain: this.$urls.domain()
     }
   },
   methods: {
@@ -37,8 +35,10 @@ export default {
     submit() {
       if (this.$utils.isEmpty(this.serverDomain)) {
         this.$refs.alert.warning('服务器地址不能为空')
-      } else {
-        localStorage.setItem(STORATE_SERVER_DOMAIN_KEY, this.serverDomain)
+      } else if (this.serverDomain.startsWith('http')) {
+        this.$refs.alert.warning('无需填写 http://')
+      }else {
+        this.$urls.setDomain(this.serverDomain)
         this.$refs.alert.success('更新配置成功')
       }
       this.$refs.settingModal.reset()
