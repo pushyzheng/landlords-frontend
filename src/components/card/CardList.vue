@@ -1,5 +1,5 @@
 <template>
-  <div class="card-list" v-bind:style="{'transform': `scale(${scale})`}">
+  <div class="card-list">
     <Card v-for="(card, idx) in data"
           :audio="audio"
           v-bind:style="{'margin-left': getOverlappingValue(idx)}"
@@ -39,7 +39,7 @@ export default {
       }
       let base;
       if (this.$utils.isPhone()) {
-        base = 2.8  // Phone
+        base = 3  // Phone
       } else {
         base = 5  // PC
       }

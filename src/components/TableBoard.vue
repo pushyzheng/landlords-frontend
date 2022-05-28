@@ -11,7 +11,7 @@
     </div>
 
     <!--出牌和不出按钮-->
-    <div id="play-operation" v-show="showPlayBtn" class="position-absolute top-50 start-50 translate-middle">
+    <div id="play-operation" v-show="showPlayBtn">
       <div>
         <div style="display: flex;justify-content: center;margin-bottom: 10px;">
           <Countdown ref="countdown"/>
@@ -28,8 +28,15 @@
       </div>
     </div>
 
+    <!--当前玩家最近出的牌-->
+    <div id="player-cards" class="flex-center" v-if="curPlayer!=null && curPlayer.recentCards.length!=0">
+      <scale value="0.5" origin="" :style="{height: recentCardsHeight}">
+        <card-list :data="curPlayer.recentCards"/>
+      </scale>
+    </div>
+
     <!--当前玩家的牌-->
-    <div id="my-card" class="position-absolute bottom-0 start-50 translate-middle-x">
+    <div id="my-card">
       <card-list ref="cardList"
                  :audio="true"
                  :data="myCardList" selectable="true"/>
@@ -43,10 +50,11 @@
 <script>
 import CardList from "./card/CardList";
 import Countdown from "../components/Countdown";
+import Scale from "./Scale";
 
 export default {
   name: "TableBoard",
-  components: {CardList, Countdown},
+  components: {Scale, CardList, Countdown},
   data() {
     return {
       dealInterval: null,
@@ -61,7 +69,12 @@ export default {
       showPassbtn: false
     }
   },
-  props: ['room'],
+  props: ['room', 'curPlayer'],
+  computed: {
+    recentCardsHeight() {
+      return this.$utils.isPhone() ? "3.75rem" : "7.5rem"
+    }
+  },
   methods: {
     showBid() {
       this.showBidBtn = true
@@ -214,14 +227,21 @@ export default {
 #bid-operation {
   display: flex;
   justify-content: center;
-  margin-top: 100px;
+  margin-bottom: 2rem;
 }
 
 #play-operation {
+  margin-bottom: 2rem;
+}
 
+#player-cards {
+  margin-bottom: 2rem;
 }
 
 @media screen and (max-width: 900px) {
+  #player-cards {
+    margin-bottom: 1rem;
+  }
 }
 
 </style>

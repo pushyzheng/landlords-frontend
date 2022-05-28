@@ -52,6 +52,15 @@
       </div>
 
       <div>
+        <h1>Scale</h1>
+        <div>
+          <scale value="0.5">
+            <card :data="{numberValue: 1, type:'SPADE'}"/>
+          </scale>
+        </div>
+      </div>
+
+      <div>
         <h1>Card</h1>
         <div style="display: flex">
           <card :data="{numberValue: 1, type:'SPADE'}"/>
@@ -78,7 +87,16 @@
         <card-list :data="cards" selectable="true" ref="selectedCardList" @select="onSelected"/>
 
         <h1>CardList zoom - 0.5</h1>
-        <card-list :data="cards" scale="0.5"/>
+        <div>
+          <scale value="0.5">
+            <card-list :data="threeCards" :overlapping="false"/>
+          </scale>
+
+          <p>overlapping: </p>
+          <scale value="0.5">
+            <card-list :data="threeCards" :overlapping="true"/>
+          </scale>
+        </div>
       </div>
 
       <Modal title="NewMessage" @submit="submit" ref="modal" id="exampleModal"
@@ -109,9 +127,10 @@ import Countdown from "../components/Countdown";
 import Card from "../components/card/Card";
 import CardList from "../components/card/CardList";
 import ImageButton from "../components/ImageButton";
+import Scale from "../components/Scale";
 
 export default {
-  components: {ImageButton, CardList, AlertNew, Modal, Toast, Countdown, Card},
+  components: {Scale, ImageButton, CardList, AlertNew, Modal, Toast, Countdown, Card},
   name: "Components",
   data() {
     return {
